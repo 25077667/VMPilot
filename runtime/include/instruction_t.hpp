@@ -41,8 +41,7 @@ struct Instruction {
      * 
      * Note: Also need to update the checksum.
      */
-    [[nodiscard]] void decrypt(Instruction_t& inst,
-                               const std::string& key) noexcept;
+    void decrypt(Instruction_t& inst, const std::string& key) noexcept;
 
     /**
      * @brief Update the checksum of the instruction.

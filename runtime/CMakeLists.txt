@@ -12,6 +12,7 @@ SET (MAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 find_package(OpenSSL REQUIRED)
 SET (LIBS ${LIBS} OpenSSL::Crypto)
 
+INCLUDE_DIRECTORIES (${INCLUDE_DIRS})
 ADD_EXECUTABLE (runtime ${SRC_FILES} ${MAIN_FILE})
 
 # Link the executable to the library

@@ -1,4 +1,4 @@
-cmake_minimum_required(3.26)
+cmake_minimum_required(VERSION 3.20)
 
 project(VMPilot)
 
@@ -56,6 +56,12 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Gy")
     endif()
 endif()
+
+# add dependencies
+include(cmake/CPM.cmake)
+
+set(OPENSSL_USE_STATIC_LIBS TRUE)
+find_package(OpenSSL REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

@@ -1,5 +1,7 @@
 # VMPilot
-A modern C++ written virtual machine SDK
+A modern C++ written virtual machine SDK.
+
+We are aiming for protect your software from reverse engineering. Moreover, it is easy to use and integrate into your project. 
 
 # Dependencies
 - [CMake](https://cmake.org/download/) (3.26 or higher)
@@ -24,3 +26,6 @@ cmake .. -DCMAKE_BUILD_TYPE=Debug -G Ninja -DCMAKE_LINKER=mold
 ninja
 ```
 
+# Documentation
+
+TBW

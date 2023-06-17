@@ -10,6 +10,8 @@ using Opcode_table_t = VMPilot::Runtime::Opcode_table;
 
 namespace detail {
 Instruction_t Fetch(const std::vector<uint8_t>& data, size_t offset) noexcept;
+
+std::unique_ptr<VMPilot::Runtime::Opcode_table_generator> OTgen_(nullptr);
 }  // namespace detail
 
 VMPilot::Runtime::Decoder& VMPilot::Runtime::Decoder::GetInstance() noexcept {
@@ -19,9 +21,10 @@ VMPilot::Runtime::Decoder& VMPilot::Runtime::Decoder::GetInstance() noexcept {
 
 void VMPilot::Runtime::Decoder::Init(const std::string& key) {
     key_ = key;
-    // Generate the decode table Opcode_table_generator
-    Opcode_table_generator gen_(key);
-    decode_table_ = gen_.Generate();
+
+    // Initialize the opcode table generator
+    detail::OTgen_ = std::make_unique<Opcode_table_generator>(key_);
+    decode_table_ = detail::OTgen_->Generate();
 }
 
 std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(
@@ -29,7 +32,6 @@ std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(
     if (data.size() % sizeof(Instruction_t) != 0)
         throw std::runtime_error("Invalid data size");
 
-    Opcode_table_generator OTgen_(this->key_);
     std::vector<uint8_t> result;
 
     // Loop over the data, each iteration decode one instruction
@@ -46,7 +48,7 @@ std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(
 
         // Find the real opcode
         const auto& OID = inst.opcode;
-        const auto& OI = OTgen_.GetOpcodeIndex(OID);
+        const auto& OI = detail::OTgen_->GetOpcodeIndex(OID);
         inst.opcode = decode_table_->find(OI);
 
         inst_helper.update_checksum(inst);

@@ -31,18 +31,23 @@ namespace VMPilot::Runtime {
 using Opcode_t = decltype(Instruction_t::opcode);
 using OI = Opcode_t;
 using OID = Opcode_t;
+using RealOpcode = Opcode_t;
+
+using Runtime_OT = std::unordered_map<OI, RealOpcode>;
+using Buildtime_OT = std::unordered_map<RealOpcode, OID>;
+using OID_to_OI = std::unordered_map<OID, OI>;
 
 class Opcode_table {
    public:
     Opcode_table() = default;
-    Opcode_table(const std::unordered_map<OI, Opcode_t>& t_) : table(t_){};
-    Opcode_table(std::unordered_map<OI, Opcode_t>&& t_)
+    Opcode_table(const std::unordered_map<OI, RealOpcode>& t_) : table(t_){};
+    Opcode_table(std::unordered_map<OI, RealOpcode>&& t_)
         : table(std::move(t_)){};
 
-    [[nodiscard]] Opcode_t find(Opcode_t opcode) const;
+    [[nodiscard]] RealOpcode find(OI oi) const;
 
    private:
-    std::unordered_map<OI, Opcode_t> table;
+    std::unordered_map<OI, RealOpcode> table;
 };
 
 // Opcode_table_generator is a helper class to generate the decode table
@@ -52,14 +57,23 @@ class Opcode_table_generator {
 
     [[nodiscard]] OI GetOpcodeIndex(Opcode_t OID) const;
 
-    [[nodiscard]] std::unique_ptr<Opcode_table> Generate() const noexcept;
+    [[nodiscard]] Runtime_OT Generate() const noexcept;
 
     // A helper function that we will use it in the future (SDK part)
-    [[nodiscard]] std::unique_ptr<std::unordered_map<Opcode_t, Opcode_t>>
-    Generate_RealOp_to_OID() const noexcept;
+    [[nodiscard]] Buildtime_OT Get_RealOp_to_OID() const noexcept;
+
+#ifdef DEBUG
+    [[nodiscard]] OID_to_OI GetOID_to_OI() const noexcept { return OID_to_OI_; }
+#endif
+
+   private:
+    void three_way_table_init();
 
    private:
     std::string key_;
+    Runtime_OT OI_to_RealOp_;
+    Buildtime_OT RealOp_to_OID_;
+    OID_to_OI OID_to_OI_;
 };
 
 };  // namespace VMPilot::Runtime

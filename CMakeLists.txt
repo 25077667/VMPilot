@@ -33,6 +33,8 @@ if (CMAKE_BUILD_TYPE MATCHES "Debug")
         endif ()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi /Od")
     endif ()
+    # Define DEBUG macro
+    add_compile_definitions(DEBUG)
 endif ()
 
 
@@ -53,6 +55,8 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
             message(WARNING "Your MSVC version does not support link time optimization")
         endif()
     endif()
+    # Define NDEBUG macro
+    add_compile_definitions(NDEBUG)
 endif()
 
 # Shrink symbol table if it is release build
@@ -73,6 +77,7 @@ endif ()
 
 # add dependencies
 include(cmake/CPM.cmake)
+CPMAddPackage("gh:nlohmann/json@3.11.2")
 
 set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)

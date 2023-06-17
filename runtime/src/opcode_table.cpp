@@ -11,16 +11,14 @@ using Instruction_t = VMPilot::Runtime::Instruction_t;
 using Opcode_t = decltype(Instruction_t::opcode);
 using OI = Opcode_t;
 using OID = Opcode_t;
+using RealOpcode = Opcode_t;
+
+using Runtime_OT = std::unordered_map<OI, RealOpcode>;
+using Buildtime_OT = std::unordered_map<RealOpcode, OID>;
+using OID_to_OI = std::unordered_map<OID, OI>;
 
 namespace detail {
-// Two loop-up tables relates:
-//      - RealOpcode to Opcode Index (OI)
-//      - OID to OI
-std::unordered_map<Opcode_t, OI> RealOp_to_OI;
-std::unordered_map<OID, OI> OID_to_OI;
-
 // SHA1
-void three_way_table_init(const std::string& key);
 std::string get_Opcode_SHA1(Opcode_t opcode, const std::string& salt) noexcept;
 };  // namespace detail
 
@@ -34,44 +32,27 @@ Opcode_t VMPilot::Runtime::Opcode_table::find(Opcode_t opcode) const {
 VMPilot::Runtime::Opcode_table_generator::Opcode_table_generator(
     const std::string& key) noexcept
     : key_(key) {
-    detail::three_way_table_init(key);
+    this->three_way_table_init();
 }
 
 Opcode_t VMPilot::Runtime::Opcode_table_generator::GetOpcodeIndex(
     Opcode_t OID) const {
-    const auto& opcode_entry = detail::OID_to_OI.find(OID);
-    if (opcode_entry == detail::OID_to_OI.end())
+    OID_to_OI::const_iterator it = OID_to_OI_.find(OID);
+    if (it == OID_to_OI_.end())
         throw std::runtime_error("Invalid instruction");
-    return opcode_entry->second;
+    return it->second;
 }
 
-std::unique_ptr<VMPilot::Runtime::Opcode_table>
-VMPilot::Runtime::Opcode_table_generator::Generate() const noexcept {
-    std::unordered_map<OI, Opcode_t> table;
-    for (const auto& [opcode, OI] : detail::RealOp_to_OI)
-        table[OI] = opcode;
-
-    return std::make_unique<Opcode_table>(table);
+Runtime_OT VMPilot::Runtime::Opcode_table_generator::Generate() const noexcept {
+    return OI_to_RealOp_;
 }
 
-std::unique_ptr<std::unordered_map<Opcode_t, Opcode_t>>
-VMPilot::Runtime::Opcode_table_generator::Generate_RealOp_to_OID()
+Buildtime_OT VMPilot::Runtime::Opcode_table_generator::Get_RealOp_to_OID()
     const noexcept {
-    std::unordered_map<Opcode_t, OID> table;
-    for (const auto& [opcode, oi1] : detail::RealOp_to_OI) {
-        // Find the OID from OID_to_OI, enumerate it
-        for (const auto& [oid, oi2] : detail::OID_to_OI) {
-            if (oi1 == oi2) {
-                table.insert(std::make_pair(opcode, oid));
-                break;
-            }
-        }
-    }
-
-    return std::make_unique<std::unordered_map<Opcode_t, Opcode_t>>(table);
+    return RealOp_to_OID_;
 }
 
-void detail::three_way_table_init(const std::string& key) {
+void VMPilot::Runtime::Opcode_table_generator::three_way_table_init() {
     // 1. For loop over the real opcodes from Opcode_enum.hpp
     // 2. Calculate the SHA1 hash of the opcode and the key(salt) inserting them into a list
     //    Now, we have a list of (SHA1, RealOpcode)
@@ -80,7 +61,6 @@ void detail::three_way_table_init(const std::string& key) {
     // 5. Assign for all OID = (start number) + array index
     //    The start number is the first element SHA1 last byte of the list
     // 6. Generate the OID_to_OI table
-    const auto& salt = key;
     std::map<std::string, Opcode_t> list;
 
     // Step 1 to 3
@@ -98,7 +78,7 @@ void detail::three_way_table_init(const std::string& key) {
             break;
 
         const auto& cur_op = static_cast<Opcode_t>(i);
-        const auto& sha1 = get_Opcode_SHA1(cur_op, salt);
+        const auto& sha1 = detail::get_Opcode_SHA1(cur_op, key_);
         list.insert(std::make_pair(std::move(sha1), cur_op));
     }
 
@@ -109,8 +89,11 @@ void detail::three_way_table_init(const std::string& key) {
     // Generate the RealOp_to_OI table and OID_to_OI table
     Opcode_t index = 0;
     for (const auto& [_, opcode] : list) {
-        RealOp_to_OI.insert(std::make_pair(opcode, index));
-        OID_to_OI.insert(std::make_pair(start_number + index, index));
+        const auto OID = start_number + index;
+        OI_to_RealOp_.insert(std::make_pair(index, opcode));
+        RealOp_to_OID_.insert(std::make_pair(opcode, OID));
+        OID_to_OI_.insert(std::make_pair(OID, index));
+
         ++index;
     }
 }

@@ -25,7 +25,7 @@ void VMPilot::Runtime::Decoder::Init(const std::string& key) {
 
     // Initialize the opcode table generator
     detail::OTgen_ = std::make_unique<Opcode_table_generator>(key_);
-    decode_table_ = detail::OTgen_->Generate();
+    decode_table_ = std::make_unique<Opcode_table>(detail::OTgen_->Generate());
 }
 
 std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(

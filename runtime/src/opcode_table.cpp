@@ -53,6 +53,23 @@ VMPilot::Runtime::Opcode_table_generator::Generate() const noexcept {
     return std::make_unique<Opcode_table>(table);
 }
 
+std::unique_ptr<std::unordered_map<Opcode_t, Opcode_t>>
+VMPilot::Runtime::Opcode_table_generator::Generate_RealOp_to_OID()
+    const noexcept {
+    std::unordered_map<Opcode_t, OID> table;
+    for (const auto& [opcode, oi1] : detail::RealOp_to_OI) {
+        // Find the OID from OID_to_OI, enumerate it
+        for (const auto& [oid, oi2] : detail::OID_to_OI) {
+            if (oi1 == oi2) {
+                table.insert(std::make_pair(opcode, oid));
+                break;
+            }
+        }
+    }
+
+    return std::make_unique<std::unordered_map<Opcode_t, Opcode_t>>(table);
+}
+
 void detail::three_way_table_init(const std::string& key) {
     // 1. For loop over the real opcodes from Opcode_enum.hpp
     // 2. Calculate the SHA1 hash of the opcode and the key(salt) inserting them into a list
@@ -90,7 +107,7 @@ void detail::three_way_table_init(const std::string& key) {
 
     // Generate the RealOp_to_OI table and OID_to_OI table
     Opcode_t index = 0;
-    for (const auto& [sha1, opcode] : list) {
+    for (const auto& [_, opcode] : list) {
         RealOp_to_OI.insert(std::make_pair(opcode, index));
         OID_to_OI.insert(std::make_pair(start_number + index, index));
         ++index;

@@ -52,6 +52,10 @@ class Opcode_table_generator {
 
     [[nodiscard]] std::unique_ptr<Opcode_table> Generate() const noexcept;
 
+    // A helper function that we will use it in the future (SDK part)
+    [[nodiscard]] std::unique_ptr<std::unordered_map<Opcode_t, Opcode_t>>
+    Generate_RealOp_to_OID() const noexcept;
+
    private:
     std::string key_;
 };

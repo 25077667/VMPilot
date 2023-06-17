@@ -29,6 +29,7 @@ std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(
     if (data.size() % sizeof(Instruction_t) != 0)
         throw std::runtime_error("Invalid data size");
 
+    Opcode_table_generator OTgen_(this->key_);
     std::vector<uint8_t> result;
 
     // Loop over the data, each iteration decode one instruction
@@ -42,7 +43,12 @@ std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(
 
         // Decrypt the instruction
         inst_helper.decrypt(inst, key_);
-        inst.opcode = decode_table_->find(inst.opcode);
+
+        // Find the real opcode
+        const auto& OID = inst.opcode;
+        const auto& OI = OTgen_.GetOpcodeIndex(OID);
+        inst.opcode = decode_table_->find(OI);
+
         inst_helper.update_checksum(inst);
 
         // Append the decrypted instruction to the result

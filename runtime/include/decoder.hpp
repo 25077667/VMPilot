@@ -8,8 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace VMPilot {
-namespace Runtime {
+namespace VMPilot::Runtime {
 class Decoder {
    public:
     [[nodiscard]] static Decoder& GetInstance() noexcept;
@@ -24,7 +23,6 @@ class Decoder {
     std::string key_;
     std::unique_ptr<Opcode_table> decode_table_;
 };
-};  // namespace Runtime
-};  // namespace VMPilot
+};  // namespace VMPilot::Runtime
 
 #endif

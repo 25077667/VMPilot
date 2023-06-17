@@ -4,6 +4,7 @@
 #include <opcode_table.hpp>
 
 #include <map>
+#include <stdexcept>
 #include <utility>
 
 using Instruction_t = VMPilot::Runtime::Instruction_t;
@@ -84,20 +85,20 @@ void detail::three_way_table_init(const std::string& key) {
 
     // Step 1 to 3
     using namespace VMPilot::Runtime::Opcode::Enum;
-    for (OpcodeBound i = OpcodeBound::__BEGIN; i != OpcodeBound::__END; ++i) {
+    for (auto i = OpcodeBound::__BEGIN; i != OpcodeBound::__END; ++i) {
         // It current opcode is over the last opcode, reset to the next starting opcode
         // Note: It is executed success as this sample link https://godbolt.org/z/PfWMfhETj
         if (i == DataMovement::__END)
-            i = ArithmeticLogic::__BEGIN;
+            i = enumToOpcodeBound(ArithmeticLogic::__BEGIN);
         else if (i == ArithmeticLogic::__END)
-            i = ControlTransfer::__BEGIN;
+            i = enumToOpcodeBound(ControlTransfer::__BEGIN);
         else if (i == ControlTransfer::__END)
-            i = ThreadingAtomic::__BEGIN;
+            i = enumToOpcodeBound(ThreadingAtomic::__BEGIN);
         else if (i == ThreadingAtomic::__END)
             break;
 
-        auto& cur_op = i;
-        auto& sha1 = get_Opcode_SHA1(cur_op, salt);
+        const auto& cur_op = static_cast<Opcode_t>(i);
+        const auto& sha1 = get_Opcode_SHA1(cur_op, salt);
         list.insert(std::make_pair(std::move(sha1), cur_op));
     }
 
@@ -123,10 +124,10 @@ std::string detail::get_Opcode_SHA1(Opcode_t opcode,
     EVP_DigestUpdate(context, opcode_str.c_str(), opcode_str.size());
     EVP_DigestUpdate(context, salt.c_str(), salt.size());
 
-    std::vector<uint8_t> result(EVP_MAX_MD_SIZE);
+    unsigned char result[EVP_MAX_MD_SIZE];
     unsigned int length = 0;
     EVP_DigestFinal_ex(context, result, &length);
     EVP_MD_CTX_free(context);
 
-    return std::string(result.begin(), result.begin() + length);
+    return std::string(result, result + length);
 }

@@ -3,6 +3,7 @@
 #include <opcode_table.hpp>
 
 #include <exception>
+#include <stdexcept>
 #include <unordered_map>
 
 using Instruction_t = VMPilot::Runtime::Instruction_t;

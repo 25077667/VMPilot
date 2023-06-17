@@ -142,26 +142,26 @@ using OpcodeBound = Internal::OpcodeBound;
 
 template <typename Enum>
 std::enable_if_t<std::is_same_v<Enum, DataMovement>,
-                 Opcode_t> constexpr enumToOpcode(Enum e) {
-    return static_cast<Opcode_t>(e);
+                 OpcodeBound> constexpr enumToOpcodeBound(Enum e) {
+    return static_cast<OpcodeBound>(e);
 }
 
 template <typename Enum>
 std::enable_if_t<std::is_same_v<Enum, ArithmeticLogic>,
-                 Opcode_t> constexpr enumToOpcode(Enum e) {
-    return static_cast<Opcode_t>(e);
+                 OpcodeBound> constexpr enumToOpcodeBound(Enum e) {
+    return static_cast<OpcodeBound>(e);
 }
 
 template <typename Enum>
 std::enable_if_t<std::is_same_v<Enum, ControlTransfer>,
-                 Opcode_t> constexpr enumToOpcode(Enum e) {
-    return static_cast<Opcode_t>(e);
+                 OpcodeBound> constexpr enumToOpcodeBound(Enum e) {
+    return static_cast<OpcodeBound>(e);
 }
 
 template <typename Enum>
 std::enable_if_t<std::is_same_v<Enum, ThreadingAtomic>,
-                 Opcode_t> constexpr enumToOpcode(Enum e) {
-    return static_cast<Opcode_t>(e);
+                 OpcodeBound> constexpr enumToOpcodeBound(Enum e) {
+    return static_cast<OpcodeBound>(e);
 }
 
 inline OpcodeBound& operator++(OpcodeBound& opcode) {

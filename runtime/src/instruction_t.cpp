@@ -1,4 +1,5 @@
 #include <openssl/evp.h>
+#include <cstring>
 #include <functional>
 
 #include <instruction_t.hpp>
@@ -57,7 +58,7 @@ auto VMPilot::Runtime::Instruction::flatten(const Instruction_t& inst) noexcept
     using Instruction_t = VMPilot::Runtime::Instruction_t;
 
     std::array<uint8_t, sizeof(Instruction_t)> result;
-    std::memcpy(result.data(), &inst, sizeof(Instruction_t));
+    ::memcpy(result.data(), &inst, sizeof(Instruction_t));
     return result;
 }
 

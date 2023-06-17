@@ -3,6 +3,8 @@
 
 #include <instruction_t.hpp>
 
+#include <memory>
+#include <string>
 #include <unordered_map>
 
 /**

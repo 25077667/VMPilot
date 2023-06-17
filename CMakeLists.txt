@@ -15,19 +15,26 @@ elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4")
 endif()
 
-# If it is debug build, we will enable debug symbols, sanitizer and disable optimization
+# Enable debug symbols, sanitizer, and disable optimization for debug build
 if (CMAKE_BUILD_TYPE MATCHES "Debug")
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer -O0")
+        # Disable sanitizer if compiler is ARM or target is ARM
+        if (NOT (CMAKE_SYSTEM_PROCESSOR MATCHES "arm" OR CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64"))
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address -fno-omit-frame-pointer -O0")
+        else ()
+            message(WARNING "Sanitizer is not supported on ARM")
+        endif ()
     elseif (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-        if (CMAKE_CXX_FLAGS MATCHES ".*(/sdl|-sdl).*")# If it is support sanitizer, we will enable it
+        # Enable sanitizer if MSVC version supports it
+        if (CMAKE_CXX_FLAGS MATCHES ".*(/sdl|-sdl).*")
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
         else ()
             message(WARNING "Your MSVC version does not support sanitizer")
-        endif()
+        endif ()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zi /Od")
-    endif()
-endif()
+    endif ()
+endif ()
+
 
 # If it is release build, we will enable optimization, also link time optimization if it is supported
 if (CMAKE_BUILD_TYPE MATCHES "Release")

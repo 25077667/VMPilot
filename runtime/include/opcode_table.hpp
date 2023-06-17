@@ -32,6 +32,11 @@ using OID = Opcode_t;
 
 class Opcode_table {
    public:
+    Opcode_table() = default;
+    Opcode_table(const std::unordered_map<OI, Opcode_t>& t_) : table(t_){};
+    Opcode_table(std::unordered_map<OI, Opcode_t>&& t_)
+        : table(std::move(t_)){};
+
     [[nodiscard]] Opcode_t find(Opcode_t opcode) const;
 
    private:
@@ -43,9 +48,9 @@ class Opcode_table_generator {
    public:
     Opcode_table_generator(const std::string& key) noexcept;
 
-    [[nodiscard]] OI GetOpcodeIndex(Opcode_t OID) const noexcept;
+    [[nodiscard]] OI GetOpcodeIndex(Opcode_t OID) const;
 
-    [[nodiscard]] std::unique_ptr<Opcode_table> Generate() noexcept;
+    [[nodiscard]] std::unique_ptr<Opcode_table> Generate() const noexcept;
 
    private:
     std::string key_;

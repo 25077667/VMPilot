@@ -37,7 +37,21 @@ VMPilot::Runtime::Opcode_table_generator::Opcode_table_generator(
 }
 
 Opcode_t VMPilot::Runtime::Opcode_table_generator::GetOpcodeIndex(
-    Opcode_t OID) const noexcept {}
+    Opcode_t OID) const {
+    const auto& opcode_entry = detail::OID_to_OI.find(OID);
+    if (opcode_entry == detail::OID_to_OI.end())
+        throw std::runtime_error("Invalid instruction");
+    return opcode_entry->second;
+}
+
+std::unique_ptr<VMPilot::Runtime::Opcode_table>
+VMPilot::Runtime::Opcode_table_generator::Generate() const noexcept {
+    std::unordered_map<OI, Opcode_t> table;
+    for (const auto& [opcode, OI] : detail::RealOp_to_OI)
+        table[OI] = opcode;
+
+    return std::make_unique<Opcode_table>(table);
+}
 
 void detail::three_way_table_init(const std::string& key) {
     // 1. For loop over the real opcodes from Opcode_enum.hpp

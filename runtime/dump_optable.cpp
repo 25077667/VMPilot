@@ -9,8 +9,9 @@ int main() {
     auto ot_gen = VMPilot::Common::Opcode_table_generator("test");
     auto runtime_table = ot_gen.Generate();
     auto buildtime_table = ot_gen.Get_RealOp_to_OID();
+#ifdef DEBUG
     auto secret_conv = ot_gen.GetOID_to_OI();
-
+#endif
     nlohmann::json j;
     j["runtime_table"] = nlohmann::json::array();
     j["buildtime_table"] = nlohmann::json::array();
@@ -32,7 +33,7 @@ int main() {
         };
         j["runtime_table"].push_back(entry);
     }
-
+#ifdef DEBUG
     // Loop over the secret conversion table
     for (const auto& [oid, oi] : secret_conv) {
         nlohmann::json entry = {
@@ -41,7 +42,7 @@ int main() {
         };
         j["secret_conversion_table"].push_back(entry);
     }
-
+#endif
     std::cout << j.dump(4) << std::endl;
 
     return 0;

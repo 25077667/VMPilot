@@ -6,13 +6,13 @@
 #include <stdexcept>
 #include <unordered_map>
 
-using Instruction_t = VMPilot::Runtime::Instruction_t;
-using Opcode_table_t = VMPilot::Runtime::Opcode_table;
+using Instruction_t = VMPilot::Common::Instruction_t;
+using Opcode_table_t = VMPilot::Common::Opcode_table;
 
 namespace detail {
 Instruction_t Fetch(const std::vector<uint8_t>& data, size_t offset) noexcept;
 
-std::unique_ptr<VMPilot::Runtime::Opcode_table_generator> OTgen_(nullptr);
+std::unique_ptr<VMPilot::Common::Opcode_table_generator> OTgen_(nullptr);
 }  // namespace detail
 
 VMPilot::Runtime::Decoder& VMPilot::Runtime::Decoder::GetInstance() noexcept {
@@ -24,8 +24,10 @@ void VMPilot::Runtime::Decoder::Init(const std::string& key) {
     key_ = key;
 
     // Initialize the opcode table generator
-    detail::OTgen_ = std::make_unique<Opcode_table_generator>(key_);
-    decode_table_ = std::make_unique<Opcode_table>(detail::OTgen_->Generate());
+    detail::OTgen_ =
+        std::make_unique<VMPilot::Common::Opcode_table_generator>(key_);
+    decode_table_ = std::make_unique<VMPilot::Common::Opcode_table>(
+        detail::OTgen_->Generate());
 }
 
 std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(
@@ -38,7 +40,7 @@ std::vector<uint8_t> VMPilot::Runtime::Decoder::Decode(
     // Loop over the data, each iteration decode one instruction
     for (size_t i = 0; i < data.size(); i += sizeof(Instruction_t)) {
         Instruction_t inst = detail::Fetch(data, i);
-        Instruction inst_helper;
+        VMPilot::Common::Instruction inst_helper;
 
         // Check if the instruction is valid
         if (!inst_helper.check(inst))

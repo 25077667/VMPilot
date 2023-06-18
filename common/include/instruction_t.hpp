@@ -1,12 +1,12 @@
-#ifndef __RUNTIME_INSTRUCTION_T_HPP__
-#define __RUNTIME_INSTRUCTION_T_HPP__
+#ifndef __COMMON_INSTRUCTION_T_HPP__
+#define __COMMON_INSTRUCTION_T_HPP__
 
 #include <array>
 #include <cstdint>
 #include <string>
 
 namespace VMPilot {
-namespace Runtime {
+namespace Common {
 
 struct Instruction_t {
     // Instruction_t Data layout:
@@ -58,6 +58,6 @@ struct Instruction {
         const Instruction_t& inst) noexcept;
 };  // struct Instruction helpers
 
-};  // namespace Runtime
+};  // namespace Common
 };  // namespace VMPilot
 #endif

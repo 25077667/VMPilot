@@ -1,5 +1,5 @@
-#ifndef __RUNTIME_OPCODE_TABLE_HPP__
-#define __RUNTIME_OPCODE_TABLE_HPP__
+#ifndef __COMMON_OPCODE_TABLE_HPP__
+#define __COMMON_OPCODE_TABLE_HPP__
 
 #include <instruction_t.hpp>
 
@@ -27,7 +27,7 @@
  * 
  */
 
-namespace VMPilot::Runtime {
+namespace VMPilot::Common {
 using Opcode_t = decltype(Instruction_t::opcode);
 using OI = Opcode_t;
 using OID = Opcode_t;
@@ -76,6 +76,6 @@ class Opcode_table_generator {
     OID_to_OI OID_to_OI_;
 };
 
-};  // namespace VMPilot::Runtime
+};  // namespace VMPilot::Common
 
 #endif

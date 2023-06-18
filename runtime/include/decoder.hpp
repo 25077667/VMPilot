@@ -21,7 +21,7 @@ class Decoder {
     Decoder(const Decoder&) = delete;
     Decoder& operator=(const Decoder&) = delete;
     std::string key_;
-    std::unique_ptr<Opcode_table> decode_table_;
+    std::unique_ptr<VMPilot::Common::Opcode_table> decode_table_;
 };
 };  // namespace VMPilot::Runtime
 

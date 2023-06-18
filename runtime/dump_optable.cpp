@@ -6,7 +6,7 @@
 #include <string>
 
 int main() {
-    auto ot_gen = VMPilot::Runtime::Opcode_table_generator("test");
+    auto ot_gen = VMPilot::Common::Opcode_table_generator("test");
     auto runtime_table = ot_gen.Generate();
     auto buildtime_table = ot_gen.Get_RealOp_to_OID();
     auto secret_conv = ot_gen.GetOID_to_OI();

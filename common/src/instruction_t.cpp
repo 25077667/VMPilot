@@ -4,7 +4,7 @@
 
 #include <instruction_t.hpp>
 
-using Instruction_t = VMPilot::Runtime::Instruction_t;
+using Instruction_t = VMPilot::Common::Instruction_t;
 using Hash_val_t = decltype(Instruction_t::checksum);
 
 namespace detail {
@@ -19,12 +19,12 @@ namespace detail {
 Hash_val_t Hash(const Instruction_t& inst) noexcept;
 };  // namespace detail
 
-bool VMPilot::Runtime::Instruction::check(const Instruction_t& inst) noexcept {
+bool VMPilot::Common::Instruction::check(const Instruction_t& inst) noexcept {
     return detail::Hash(inst) == inst.checksum;
 }
 
-void VMPilot::Runtime::Instruction::decrypt(Instruction_t& inst,
-                                            const std::string& key) noexcept {
+void VMPilot::Common::Instruction::decrypt(Instruction_t& inst,
+                                           const std::string& key) noexcept {
     // Decrypt the instruction using the key
     // We use AES-256-CBC from the OpenSSL library to decrypt the instruction.
     const auto data = flatten(inst);
@@ -48,14 +48,14 @@ void VMPilot::Runtime::Instruction::decrypt(Instruction_t& inst,
     EVP_CIPHER_CTX_free(ctx);
 }
 
-void VMPilot::Runtime::Instruction::update_checksum(
+void VMPilot::Common::Instruction::update_checksum(
     Instruction_t& inst) noexcept {
     inst.checksum = detail::Hash(inst);
 }
 
-auto VMPilot::Runtime::Instruction::flatten(const Instruction_t& inst) noexcept
+auto VMPilot::Common::Instruction::flatten(const Instruction_t& inst) noexcept
     -> std::array<uint8_t, sizeof(Instruction_t)> {
-    using Instruction_t = VMPilot::Runtime::Instruction_t;
+    using Instruction_t = VMPilot::Common::Instruction_t;
 
     std::array<uint8_t, sizeof(Instruction_t)> result;
     ::memcpy(result.data(), &inst, sizeof(Instruction_t));

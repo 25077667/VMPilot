@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <utility>
 
-using Instruction_t = VMPilot::Runtime::Instruction_t;
+using Instruction_t = VMPilot::Common::Instruction_t;
 using Opcode_t = decltype(Instruction_t::opcode);
 using OI = Opcode_t;
 using OID = Opcode_t;
@@ -22,20 +22,20 @@ namespace detail {
 std::string get_Opcode_SHA1(Opcode_t opcode, const std::string& salt) noexcept;
 };  // namespace detail
 
-Opcode_t VMPilot::Runtime::Opcode_table::find(Opcode_t opcode) const {
-    const auto& opcode_entry = table.find(opcode);
+RealOpcode VMPilot::Common::Opcode_table::find(OI oi) const {
+    const auto& opcode_entry = table.find(oi);
     if (opcode_entry == table.end())
         throw std::runtime_error("Invalid instruction");
     return opcode_entry->second;
 }
 
-VMPilot::Runtime::Opcode_table_generator::Opcode_table_generator(
+VMPilot::Common::Opcode_table_generator::Opcode_table_generator(
     const std::string& key) noexcept
     : key_(key) {
     this->three_way_table_init();
 }
 
-Opcode_t VMPilot::Runtime::Opcode_table_generator::GetOpcodeIndex(
+Opcode_t VMPilot::Common::Opcode_table_generator::GetOpcodeIndex(
     Opcode_t OID) const {
     OID_to_OI::const_iterator it = OID_to_OI_.find(OID);
     if (it == OID_to_OI_.end())
@@ -43,23 +43,23 @@ Opcode_t VMPilot::Runtime::Opcode_table_generator::GetOpcodeIndex(
     return it->second;
 }
 
-Runtime_OT VMPilot::Runtime::Opcode_table_generator::Generate() const noexcept {
+Runtime_OT VMPilot::Common::Opcode_table_generator::Generate() const noexcept {
     return OI_to_RealOp_;
 }
 
-Buildtime_OT VMPilot::Runtime::Opcode_table_generator::Get_RealOp_to_OID()
+Buildtime_OT VMPilot::Common::Opcode_table_generator::Get_RealOp_to_OID()
     const noexcept {
     return RealOp_to_OID_;
 }
 
 #ifdef DEBUG
-OID_to_OI VMPilot::Runtime::Opcode_table_generator::GetOID_to_OI()
+OID_to_OI VMPilot::Common::Opcode_table_generator::GetOID_to_OI()
     const noexcept {
     return OID_to_OI_;
 }
 #endif
 
-void VMPilot::Runtime::Opcode_table_generator::three_way_table_init() {
+void VMPilot::Common::Opcode_table_generator::three_way_table_init() {
     // 1. For loop over the real opcodes from Opcode_enum.hpp
     // 2. Calculate the SHA1 hash of the opcode and the key(salt) inserting them into a list
     //    Now, we have a list of (SHA1, RealOpcode)
@@ -71,7 +71,7 @@ void VMPilot::Runtime::Opcode_table_generator::three_way_table_init() {
     std::map<std::string, Opcode_t> list;
 
     // Step 1 to 3
-    using namespace VMPilot::Runtime::Opcode::Enum;
+    using namespace VMPilot::Common::Opcode::Enum;
     for (auto i = OpcodeBound::__BEGIN; i != OpcodeBound::__END; ++i) {
         // It current opcode is over the last opcode, reset to the next starting opcode
         // Note: It is executed success as this sample link https://godbolt.org/z/PfWMfhETj

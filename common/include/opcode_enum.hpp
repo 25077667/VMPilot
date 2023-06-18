@@ -25,8 +25,8 @@
  *   FENCE: Memory barrier instructions for ordering memory operations.
  */
 
-#ifndef __RUNTIME_OPCODE_ENUM_HPP__
-#define __RUNTIME_OPCODE_ENUM_HPP__
+#ifndef __COMMON_OPCODE_ENUM_HPP__
+#define __COMMON_OPCODE_ENUM_HPP__
 
 #include <instruction_t.hpp>
 
@@ -35,7 +35,7 @@
 #include <cstdint>
 #include <type_traits>
 
-namespace VMPilot::Runtime::Opcode::Enum {
+namespace VMPilot::Common::Opcode::Enum {
 using Opcode_t = decltype(Instruction_t::opcode);
 
 namespace Internal {
@@ -180,6 +180,6 @@ constexpr auto enumSize(Enum begin__ = Enum::__BEGIN, Enum end__ = Enum::__END)
     return static_cast<Opcode_t>(end__) - static_cast<Opcode_t>(begin__) - 2;
 }
 
-};  // namespace VMPilot::Runtime::Opcode::Enum
+};  // namespace VMPilot::Common::Opcode::Enum
 
 #endif

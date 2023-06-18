@@ -52,6 +52,13 @@ Buildtime_OT VMPilot::Runtime::Opcode_table_generator::Get_RealOp_to_OID()
     return RealOp_to_OID_;
 }
 
+#ifdef DEBUG
+OID_to_OI VMPilot::Runtime::Opcode_table_generator::GetOID_to_OI()
+    const noexcept {
+    return OID_to_OI_;
+}
+#endif
+
 void VMPilot::Runtime::Opcode_table_generator::three_way_table_init() {
     // 1. For loop over the real opcodes from Opcode_enum.hpp
     // 2. Calculate the SHA1 hash of the opcode and the key(salt) inserting them into a list

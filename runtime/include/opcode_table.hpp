@@ -63,7 +63,7 @@ class Opcode_table_generator {
     [[nodiscard]] Buildtime_OT Get_RealOp_to_OID() const noexcept;
 
 #ifdef DEBUG
-    [[nodiscard]] OID_to_OI GetOID_to_OI() const noexcept { return OID_to_OI_; }
+    [[nodiscard]] OID_to_OI GetOID_to_OI() const noexcept;
 #endif
 
    private:

@@ -9,6 +9,12 @@ Experience the power of VMPilot and fortify your software against reverse engine
 # Dependencies
 - [CMake](https://cmake.org/download/) (3.26 or higher)
 - Supporting C++17 or higher compiler
+- OpenSSL 3.1.1
+
+### Underlining Dependencies
+It would be fetched automatically by CPM(CMake Package Manager) during the build process.
+- [nlohmann/json](https://github.com/nlohmann/json)
+- [avast/retdec](https://github.com/avast/retdec) for SDK
 
 ## Optional Dependencies
 - [Ninja](https://github.com/ninja-build/ninja)

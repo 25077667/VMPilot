@@ -1,22 +1,21 @@
-set (INCLUDE_DIRS 
-    ${INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+# Disable Werror for retdec, only if not Windows (Windows doesn't support -Wno-error)
+if (NOT WIN32)
+    set (ORIG_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error")
+endif()
+CPMAddPackage("gh:25077667/retdec@5.1")
+set (RETDEC_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/_deps/retdec-src/include)
+
+# Recover original CXX flags
+if (NOT WIN32)
+    set (CMAKE_CXX_FLAGS "${ORIG_CMAKE_CXX_FLAGS}")
+endif()
+
+set (MAIN_FILE main.cpp)
 
 set (TARGET_NAME VMPilot_SDK)
 
-CPMAddPackage("gh:avast/retdec@5.0")
+add_subdirectory(src)
 
-# Add the source files
-set (SRC_FILES ${SRC_FILES}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/bytecode_compiler.cpp
-)
-
-set (LIBS ${LIBS} opcode_table)
-
-include_directories(${INCLUDE_DIRS})
-set (MAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-
-add_executable (${TARGET_NAME} ${SRC_FILES} ${MAIN_FILE})
-
-target_link_libraries(${TARGET_NAME} ${LIBS})
+add_executable(${TARGET_NAME} ${MAIN_FILE})
+target_link_libraries(${TARGET_NAME} PRIVATE ${RETDEC_LIBRARIES} VMPilot_SDK_LIB)

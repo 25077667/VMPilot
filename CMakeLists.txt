@@ -78,6 +78,7 @@ endif ()
 # add dependencies
 include(cmake/CPM.cmake)
 CPMAddPackage("gh:nlohmann/json@3.11.2")
+
 # Set linux openssl path
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(OPENSSL_ROOT_DIR /usr/local/opt/openssl)

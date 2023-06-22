@@ -5,6 +5,8 @@ set (INCLUDE_DIRS
 
 set (TARGET_NAME VMPilot_SDK)
 
+CPMAddPackage("gh:avast/retdec@5.0")
+
 # Add the source files
 set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bytecode_compiler.cpp

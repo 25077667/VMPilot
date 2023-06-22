@@ -11,6 +11,11 @@ Experience the power of VMPilot and fortify your software against reverse engine
 - Supporting C++17 or higher compiler
 - OpenSSL 3.1.1
 
+### Underlining Dependencies
+It would be fetched automatically by CPM(CMake Package Manager) during the build process.
+- [nlohmann/json](https://github.com/nlohmann/json)
+- [avast/retdec](https://github.com/avast/retdec) for SDK
+
 ## Optional Dependencies
 - [Ninja](https://github.com/ninja-build/ninja)
 - [mold](https://github.com/rui314/mold)

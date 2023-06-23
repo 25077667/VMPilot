@@ -74,7 +74,7 @@ further information about the details, please feel free to contact me.
     - [ ] Protect Region Obfuscator
         > LLVM IR Obfuscator
     - [ ] Protect Region Encryptor
-        > Use the `common` library to encrypt the protect region.
+        > Use the [common](common/) library to encrypt the protect region.
     - [ ] native code decomplier (see [sdk/include/bytecode_compiler/bytecode_compiler.hpp](sdk/include/bytecode_compiler/bytecode_compiler.hpp))
         - [ ] x86 support
             > Finish this first

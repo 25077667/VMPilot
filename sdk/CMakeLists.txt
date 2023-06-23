@@ -6,13 +6,19 @@ endif()
 
 # There are some `enum` value names "DEBUG" in retdec, which causes a conflict with our DEBUG macro
 # We need to undefine it before including retdec headers
-add_definitions(-UDEBUG)
+remove_definitions(-DDEBUG)
 
 # The retdec has DCMAKE_INSTALL_PREFIX to /usr/local/include/capstone.
 # We need to change it to our local directory
 set (RETDEC_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/_deps/retdec-build)
 
-CPMAddPackage("gh:25077667/retdec@5.1")
+# Apply the RETDEC_CMAKE_ARGS to the retdec package
+CPMAddPackage(
+    NAME retdec
+    VERSION 5.1
+    GITHUB_REPOSITORY "25077667/retdec"
+    ${RETDEC_CMAKE_ARGS}
+)
 set (RETDEC_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/_deps/retdec-src/include)
 
 # Recover the DEBUG macro

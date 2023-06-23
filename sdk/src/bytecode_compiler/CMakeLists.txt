@@ -1,7 +1,7 @@
 set (INCLUDE_DIRS 
     ${INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}../../include/
-    ${CMAKE_CURRENT_SOURCE_DIR}../../include/bytecode_compiler/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../include/
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../include/bytecode_compiler/
     ${RETDEC_INCLUDE_DIRS}
 )
 

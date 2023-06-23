@@ -106,3 +106,6 @@ further information about the details, please feel free to contact me.
 # Documentation
 
 TBW
+
+# Flowchart
+![](/assets/outline.svg)

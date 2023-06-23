@@ -6,6 +6,33 @@ Unlike traditional black box solutions, VMPilot is built with transparency in mi
 
 Experience the power of VMPilot and fortify your software against reverse engineering threats.
 
+## Expected Usage
+Similar to VMProtect:
+```cpp
+#include <vmpilot/sdk.hpp>
+
+template <typename T>
+T square(T x) {
+    VMPilot_Begin(__FUNCTION__);
+    auto result = x * x;
+    VMPilot_End(__FUNCTION__);
+    return result;
+}
+```
+
+Output:
+```asm
+square:
+    push rbp
+    call    _Z13VMPilot_BeginPKc    ; VMPilot_Begin(square);
+    ... garbage code ...
+    ... garbage code ...
+    ... garbage code ...
+    call    _Z11VMPilot_EndPKc      ; VMPilot_End(__FUNCTION__);
+    pop rbp
+    ret
+```
+
 # Dependencies
 - [CMake](https://cmake.org/download/) (3.20 or higher)
 - Supporting C++17 or higher compiler

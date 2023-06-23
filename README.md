@@ -15,8 +15,8 @@ Experience the power of VMPilot and fortify your software against reverse engine
 ### Underlining Dependencies
 It would be fetched automatically by CPM(CMake Package Manager) during the build process.
 - [nlohmann/json](https://github.com/nlohmann/json)
-- [avast/retdec](https://github.com/25077667/retdec) for SDK
-    > It's our patched version of retdec, which is used to decompile the target binary.
+- [25077667/retdec](https://github.com/25077667/retdec) for SDK
+    > It's our patched version of avast/retdec, which is used to decompile the target binary.
 
 ## Optional Dependencies
 - [Ninja](https://github.com/ninja-build/ninja)

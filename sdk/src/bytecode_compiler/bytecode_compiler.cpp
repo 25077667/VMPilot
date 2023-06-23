@@ -18,7 +18,8 @@ std::unique_ptr<CompilerBase> CompilerFactory::CreateCompiler(
     return nullptr;
 }
 
-std::vector<uint8_t> _NotImplementedYet::Compile(const nlohmann::json script) {
+std::vector<uint8_t> _NotImplementedYet::Compile(
+    [[maybe_unused]] const ScriptRecipe& script) {
     throw std::runtime_error(
         "Not implemented yet, but it is in the future work.");
 }

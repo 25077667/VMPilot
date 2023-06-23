@@ -1,6 +1,6 @@
 set (INCLUDE_DIRS 
     ${INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
 set (TARGET_NAME VMPilot_SDK_LIB)

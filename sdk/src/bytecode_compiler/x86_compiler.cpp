@@ -2,4 +2,8 @@
 
 using namespace VMPilot::SDK::BytecodeCompiler;
 
-std::vector<uint8_t> X86Compiler::Compile(const ScriptRecipe& script) {}
+std::vector<uint8_t> X86Compiler::Compile(
+    [[maybe_unused]] const ScriptRecipe& script) {
+
+    return {};
+}

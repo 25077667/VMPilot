@@ -18,29 +18,6 @@ It would be fetched automatically by CPM(CMake Package Manager) during the build
 - [25077667/retdec](https://github.com/25077667/retdec) for SDK
     > It's our patched version of avast/retdec, which is used to decompile the target binary.
 
-We know there are some supporting issue for retdec on ARM64, and we would deal with it in the future.
-```    
-[2/2] Linking CXX executable bin/retdec-bin2pat
-FAILED: bin/retdec-bin2pat 
-: && ... some compile error ... :
-Undefined symbols for architecture arm64:
-  "__ZN3re23RE23Set3AddERKNS_11StringPieceEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE", referenced from:
-      __ZN7yaramod12ParserDriver10initializeEv in libyaramod.a(parser_driver.cpp.o)
-  "__ZN3re23RE2C1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE", referenced from:
-      __ZN3pog6ParserIN7yaramod5ValueEEC1Ev in libyaramod.a(parser_driver.cpp.o)
-      __ZN7yaramod12ParserDriver10initializeEv in libyaramod.a(parser_driver.cpp.o)
-  "__ZNK3re23RE23Set5MatchERKNS_11StringPieceEPSt6vectorIiSaIiEE", referenced from:
-      __ZN3pog9TokenizerIN7yaramod5ValueEE10next_tokenEv in libyaramod.a(parser_driver.cpp.o)
-  "__ZNKSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEE3strEv", referenced from:
-      __ZN10LogMessage5FlushEv in libpog_re2.a(set.cc.o)
-      __ZN10LogMessage5FlushEv in libpog_re2.a(re2.cc.o)
-      __ZN10LogMessage5FlushEv in libpog_re2.a(compile.cc.o)
-      __ZN10LogMessage5FlushEv in libpog_re2.a(onepass.cc.o)
-      __ZN10LogMessage5FlushEv in libpog_re2.a(bitstate.cc.o)
-      __ZN10LogMessage5FlushEv in libpog_re2.a(dfa.cc.o)
-      __ZN10LogMessage5FlushEv in libpog_re2.a(nfa.cc.o)
-```
-
 ## Optional Dependencies
 - [Ninja](https://github.com/ninja-build/ninja)
 - [mold](https://github.com/rui314/mold)

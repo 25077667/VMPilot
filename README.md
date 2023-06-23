@@ -7,7 +7,7 @@ Unlike traditional black box solutions, VMPilot is built with transparency in mi
 Experience the power of VMPilot and fortify your software against reverse engineering threats.
 
 # Dependencies
-- [CMake](https://cmake.org/download/) (3.26 or higher)
+- [CMake](https://cmake.org/download/) (3.20 or higher)
 - Supporting C++17 or higher compiler
 - OpenSSL 3.1.1
 - autotools (autoconf, automake, and libtool) for retdec
@@ -17,6 +17,29 @@ It would be fetched automatically by CPM(CMake Package Manager) during the build
 - [nlohmann/json](https://github.com/nlohmann/json)
 - [25077667/retdec](https://github.com/25077667/retdec) for SDK
     > It's our patched version of avast/retdec, which is used to decompile the target binary.
+
+We know there are some supporting issue for retdec on ARM64, and we would deal with it in the future.
+```    
+[2/2] Linking CXX executable bin/retdec-bin2pat
+FAILED: bin/retdec-bin2pat 
+: && ... some compile error ... :
+Undefined symbols for architecture arm64:
+  "__ZN3re23RE23Set3AddERKNS_11StringPieceEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE", referenced from:
+      __ZN7yaramod12ParserDriver10initializeEv in libyaramod.a(parser_driver.cpp.o)
+  "__ZN3re23RE2C1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE", referenced from:
+      __ZN3pog6ParserIN7yaramod5ValueEEC1Ev in libyaramod.a(parser_driver.cpp.o)
+      __ZN7yaramod12ParserDriver10initializeEv in libyaramod.a(parser_driver.cpp.o)
+  "__ZNK3re23RE23Set5MatchERKNS_11StringPieceEPSt6vectorIiSaIiEE", referenced from:
+      __ZN3pog9TokenizerIN7yaramod5ValueEE10next_tokenEv in libyaramod.a(parser_driver.cpp.o)
+  "__ZNKSt3__115basic_stringbufIcNS_11char_traitsIcEENS_9allocatorIcEEE3strEv", referenced from:
+      __ZN10LogMessage5FlushEv in libpog_re2.a(set.cc.o)
+      __ZN10LogMessage5FlushEv in libpog_re2.a(re2.cc.o)
+      __ZN10LogMessage5FlushEv in libpog_re2.a(compile.cc.o)
+      __ZN10LogMessage5FlushEv in libpog_re2.a(onepass.cc.o)
+      __ZN10LogMessage5FlushEv in libpog_re2.a(bitstate.cc.o)
+      __ZN10LogMessage5FlushEv in libpog_re2.a(dfa.cc.o)
+      __ZN10LogMessage5FlushEv in libpog_re2.a(nfa.cc.o)
+```
 
 ## Optional Dependencies
 - [Ninja](https://github.com/ninja-build/ninja)
@@ -36,6 +59,43 @@ mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Debug -G Ninja -DCMAKE_LINKER=mold
 ninja
 ```
+
+# Ongoing Projects
+
+The following projects are currently in progress and will be released in the future.
+
+You are welcome to contribute to these projects, and if you have any questions or need 
+further information about the details, please feel free to contact me.
+
+
+- [ ] VMPilot SDK
+    - [ ] Protect Region Segamentator
+    - [ ] Protect Region Obfuscator
+    - [ ] Protect Region Encryptor
+    - [ ] native code decomplier (see [sdk/include/bytecode_compiler/bytecode_compiler.hpp](sdk/include/bytecode_compiler/bytecode_compiler.hpp))
+        - [ ] x86 support
+        - [ ] x86_64 support
+        - [ ] More further architectures support
+            - [ ] ARM
+            - [ ] ARM64
+    - [ ] LLVM IR Backend
+    - [ ] Post-process assembler
+
+- [ ] VMPilot Loader
+    - [ ] ELF loader
+    - [ ] PE loader
+    - [ ] Mach-O loader
+
+- [ ] VMPilot runtime
+    - [ ] VMPilot VM
+
+- Miscellaneous
+    - [ ] Migrate OpenSSL to [Botan](https://github.com/randombit/botan)
+        - [ ] Remove OpenSSL dependency
+        - [ ] CMake CPM support
+    - [ ] Documentation
+    - [ ] Unit tests
+    - [ ] CI/CD
 
 # Documentation
 

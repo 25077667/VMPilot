@@ -12,6 +12,7 @@ include_directories(${INCLUDE_DIRS})
 add_library(${TARGET_NAME} STATIC ${SRC_FILE})
 
 add_subdirectory(bytecode_compiler)
+add_subdirectory(segmentator)
 set (LIBS ${LIBS}
     VMPilot_SDK_Bytecode_Compiler
 )

@@ -12,6 +12,7 @@ set(LIB_NAME "opcode_table")
 set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/opcode_table.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/instruction_t.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/file_type_parser.cpp
 )
 
 # set third party libraries

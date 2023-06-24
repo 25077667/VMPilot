@@ -107,9 +107,9 @@ further information about the details, please feel free to contact me.
     - [ ] Unit tests
     - [ ] CI/CD
 
-# Documentation
+# Documentation and Known Issues
 
-TBW
+Please refer to [wiki](/wiki) for more information.
 
 # Flowchart
 ![](/assets/outline.svg)

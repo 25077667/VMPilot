@@ -79,15 +79,6 @@ endif ()
 include(cmake/CPM.cmake)
 CPMAddPackage("gh:nlohmann/json@3.11.2")
 
-# Set linux openssl path
-if (CMAKE_SYSTEM_NAME MATCHES "Linux")
-    set(OPENSSL_ROOT_DIR /usr/lib)
-elseif (CMAKE_SYSTEM_NAME MATCHES "Darwin")
-    set(OPENSSL_ROOT_DIR /opt/homebrew/opt/openssl)
-elseif (CMAKE_SYSTEM_NAME MATCHES "Windows")
-    set(OPENSSL_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vcpkg/installed/x64-windows)  
-endif()
-
 find_package(OpenSSL REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

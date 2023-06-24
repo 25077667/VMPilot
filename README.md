@@ -73,23 +73,23 @@ further information about the details, please feel free to contact me.
 
 
 - [ ] VMPilot SDK
-    - [ ] Protect Region Segamentator
-        > Identify the protect region in the target binary, save them into different files.
+    - [ ] Protect Region Segmentator
+        > Identify the protected region in the target binary and save them into different files.
     - [ ] Protect Region Obfuscator
         > LLVM IR Obfuscator
     - [ ] Protect Region Encryptor
-        > Use the [common](common/) library to encrypt the protect region.
-    - [ ] native code decomplier (see [sdk/include/bytecode_compiler/bytecode_compiler.hpp](sdk/include/bytecode_compiler/bytecode_compiler.hpp))
+        > Use the [common](common/) library to encrypt the protected region.
+    - [ ] Native code decompiler (see [sdk/include/bytecode_compiler/bytecode_compiler.hpp](sdk/include/bytecode_compiler/bytecode_compiler.hpp))
         - [ ] x86 support
-            > Finish this first
-            > It takes a segmented native x86 binary and decompile it to LLVM IR.
+            > Finish this first.
+            > It takes a segmented native x86 binary and decompiles it to LLVM IR.
         - [ ] x86_64 support
-        - [ ] More further architectures support
+        - [ ] Support for other architectures
             - [ ] ARM, ARM64
     - [ ] LLVM IR Backend
         > Get `bytecode_compiler`'s output, LLVM IR, and compile it to our bytecode.
     - [ ] Post-process assembler
-        >  Assemble encrypted bytecode and native code in to a single binary
+        > Assemble encrypted bytecode and native code into a single binary.
 
 - [ ] VMPilot Loader
     - [ ] ELF loader

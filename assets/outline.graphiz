@@ -1,57 +1,54 @@
 digraph flowchart {
-
     node [shape=box];
     Source_Code [label="Source Code"];
-    Source_Code -> Protect_Region_Segamentator;
+    Source_Code -> Protect_Region_Segmentator;
     CustomerConfig [label="Customer Config"];
     CustomerConfig -> Protect_Region_Encryptor;
     CustomerConfig -> VMPilot_Loader;
-    Release_binary [label="Release Bionary"];
-    
+    Release_binary [label="Release Binary"];
+
     // VMPilot_SDK
     subgraph cluster_VMPilot_SDK {
         label="VMPilot_SDK";
         style="rounded";
 
-        Protect_Region_Segamentator [label="Protect Region Segamentator"];
+        Protect_Region_Segmentator [label="Protect Region Segmentator"];
         Protect_Region_Obfuscator [label="Protect Region Obfuscator"];
         Protect_Region_Encryptor [label="Protect Region Encryptor"];
-        Native_Code_Decomplier [label="Native Code Decomplier"];
+        Native_Code_Decompiler [label="Native Code Decompiler"];
         LLVM_IR_Backend [label="LLVM IR Backend"];
         Post_Process_Assembler [label="Post-process assembler"];
-        
-        
-        Protect_Region_Segamentator -> Native_Code_Decomplier;
-        Protect_Region_Segamentator -> Native_Code_Decomplier;
-        Protect_Region_Segamentator -> Native_Code_Decomplier;
-        Protect_Region_Segamentator -> Native_Code_Decomplier;
-        Native_Code_Decomplier -> Protect_Region_Obfuscator;
+
+        Protect_Region_Segmentator -> Native_Code_Decompiler;
+        Protect_Region_Segmentator -> Native_Code_Decompiler;
+        Protect_Region_Segmentator -> Native_Code_Decompiler;
+        Protect_Region_Segmentator -> Native_Code_Decompiler;
+        Native_Code_Decompiler -> Protect_Region_Obfuscator;
         Protect_Region_Obfuscator -> LLVM_IR_Backend;
         LLVM_IR_Backend -> Protect_Region_Encryptor;
         Protect_Region_Encryptor -> Post_Process_Assembler;
     }
-    
+
     Post_Process_Assembler -> Release_binary;
     Release_binary -> VMPilot_Loader;
-    
+
     // VMPilot Loader Projects
     subgraph cluster_vmpilot_loader_projects {
         label="VMPilot Loader";
         style="rounded";
-        
-        
+
         VMPilot_Loader -> VMPilot_Native;
         VMPilot_Loader -> VMPilot_Decrypt;
     }
-    
+
     // VMPilot runtime Projects
     subgraph cluster_vmpilot_runtime_projects {
         label="VMPilot runtime";
         style="rounded,dashed";
-        
+
         VMPilot_Native [label="VMPilot Native"];
         VMPilot_VM [label="VMPilot VM"];
-        
+
         VMPilot_Decrypt -> VMPilot_VM;
         VMPilot_VM -> VMPilot_Decrypt;
     }

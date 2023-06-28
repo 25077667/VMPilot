@@ -11,7 +11,7 @@
  * @brief The opcode table mechanism
  * 
  * TL;DR
- * SHA1(RealOpcode, salt) -> OID -> OI -> RealOpcode
+ * BLAKE3(RealOpcode, salt) -> OID -> OI -> RealOpcode
  * Opcode_table is using (OI, RealOpcode) pairs to retrieve the real opcode.
  * 
  * The Real opcode (RealOpcode) refers to the opcode_enum.hpp file.
@@ -20,7 +20,7 @@
  * The opcode table mechanism retrieves the real opcode by following these steps:
  * 1. Obtain the Opcode ID (OID) from binary source data
  *    using the decoder mechanism. (see decoder.hpp)
- * 2. We use SHA1, the salt is the key string from the decoder,
+ * 2. We use BLAKE3, the salt is the key string from the decoder,
  *    to the OID to calculate the corresponding Opcode Index (OI).
  * 3. Use the Opcode Index (OI) to locate the real opcode in the opcode table.
  * 

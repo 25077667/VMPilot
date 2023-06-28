@@ -1,4 +1,4 @@
-#include <openssl/evp.h>
+#include <blake3.h>
 #include <instruction_t.hpp>
 #include <opcode_enum.hpp>
 #include <opcode_table.hpp>
@@ -18,9 +18,9 @@ using Buildtime_OT = std::unordered_map<RealOpcode, OID>;
 using OID_to_OI = std::unordered_map<OID, OI>;
 
 namespace detail {
-// SHA1
-std::string get_Opcode_SHA1(Opcode_t opcode, const std::string& salt) noexcept;
-}  // namespace detail
+std::string get_Opcode_BLAKE3(Opcode_t opcode,
+                              const std::string& salt) noexcept;
+};  // namespace detail
 
 RealOpcode VMPilot::Common::Opcode_table::find(OI oi) const {
     const auto& opcode_entry = table.find(oi);
@@ -61,12 +61,12 @@ OID_to_OI VMPilot::Common::Opcode_table_generator::GetOID_to_OI()
 
 void VMPilot::Common::Opcode_table_generator::three_way_table_init() {
     // 1. For loop over the real opcodes from Opcode_enum.hpp
-    // 2. Calculate the SHA1 hash of the opcode and the key(salt) inserting them into a list
-    //    Now, we have a list of (SHA1, RealOpcode)
-    // 3. Sort the list with the SHA1, array index is the OI
+    // 2. Calculate the BLAKE3 hash of the opcode and the key(salt) inserting them into a list
+    //    Now, we have a list of (BLAKE3, RealOpcode)
+    // 3. Sort the list with the BLAKE3, array index is the OI
     // 4. For loop over the list and assign the index to the hash
     // 5. Assign for all OID = (start number) + array index
-    //    The start number is the first element SHA1 last byte of the list
+    //    The start number is the first element BLAKE3 last byte of the list
     // 6. Generate the OID_to_OI table
     std::map<std::string, Opcode_t> list;
 
@@ -85,8 +85,8 @@ void VMPilot::Common::Opcode_table_generator::three_way_table_init() {
             break;
 
         const auto& cur_op = static_cast<Opcode_t>(i);
-        const auto& sha1 = detail::get_Opcode_SHA1(cur_op, key_);
-        list.insert(std::make_pair(std::move(sha1), cur_op));
+        const auto& blake3 = detail::get_Opcode_BLAKE3(cur_op, key_);
+        list.insert(std::make_pair(std::move(blake3), cur_op));
     }
 
     // Step 4
@@ -105,19 +105,19 @@ void VMPilot::Common::Opcode_table_generator::three_way_table_init() {
     }
 }
 
-std::string detail::get_Opcode_SHA1(Opcode_t opcode,
-                                    const std::string& salt) noexcept {
+std::string detail::get_Opcode_BLAKE3(Opcode_t opcode,
+                                      const std::string& salt) noexcept {
     // To string
-    const auto& opcode_str = std::to_string(opcode);
-    EVP_MD_CTX* context = EVP_MD_CTX_new();
-    EVP_DigestInit_ex(context, EVP_sha1(), nullptr);
-    EVP_DigestUpdate(context, opcode_str.c_str(), opcode_str.size());
-    EVP_DigestUpdate(context, salt.c_str(), salt.size());
+    const auto& opcode_str = std::to_string(opcode) + salt;
 
-    unsigned char result[EVP_MAX_MD_SIZE];
-    unsigned int length = 0;
-    EVP_DigestFinal_ex(context, result, &length);
-    EVP_MD_CTX_free(context);
+    blake3_hasher hasher;
+    blake3_hasher_init(&hasher);
 
-    return std::string(result, result + length);
+    // Hash the opcode
+    blake3_hasher_update(&hasher, opcode_str.c_str(), opcode_str.size());
+    // Finalize the hash. BLAKE3_OUT_LEN is the default output length, 32 bytes.
+    uint8_t result[BLAKE3_OUT_LEN];
+    blake3_hasher_finalize(&hasher, result, BLAKE3_OUT_LEN);
+
+    return std::string(result, result + BLAKE3_OUT_LEN);
 }

@@ -1,4 +1,9 @@
-set (INCLUDE_DIRS ${INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set (INCLUDE_DIRS ${INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+
+    # Include BLAKE3 header files
+    ${CMAKE_BINARY_DIR}/_deps/blake3-src/c/
+)
 
 # setup library source name
 set(LIB_NAME "opcode_table")

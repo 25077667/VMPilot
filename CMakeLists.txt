@@ -78,6 +78,11 @@ endif ()
 # add dependencies
 include(cmake/CPM.cmake)
 CPMAddPackage("gh:nlohmann/json@3.11.2")
+CPMAddPackage(
+    NAME BLAKE3-cmake
+    GITHUB_REPOSITORY 25077667/BLAKE3-cmake
+    GIT_TAG 1.4.0
+)
 
 find_package(OpenSSL REQUIRED)
 

@@ -132,7 +132,7 @@ enum class OpcodeBound : Opcode_t {
 };
 
 #undef BOUND_GEN_HELPER
-};  // namespace Internal
+}  // namespace Internal
 
 using DataMovement = Internal::DataMovement;
 using ArithmeticLogic = Internal::ArithmeticLogic;
@@ -180,6 +180,6 @@ constexpr auto enumSize(Enum begin__ = Enum::__BEGIN, Enum end__ = Enum::__END)
     return static_cast<Opcode_t>(end__) - static_cast<Opcode_t>(begin__) - 2;
 }
 
-};  // namespace VMPilot::Common::Opcode::Enum
+}  // namespace VMPilot::Common::Opcode::Enum
 
 #endif

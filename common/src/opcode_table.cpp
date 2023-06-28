@@ -20,7 +20,7 @@ using OID_to_OI = std::unordered_map<OID, OI>;
 namespace detail {
 std::string get_Opcode_BLAKE3(Opcode_t opcode,
                               const std::string& salt) noexcept;
-};  // namespace detail
+}  // namespace detail
 
 RealOpcode VMPilot::Common::Opcode_table::find(OI oi) const {
     const auto& opcode_entry = table.find(oi);

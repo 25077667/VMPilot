@@ -6,7 +6,7 @@ using namespace VMPilot::SDK;
 namespace detail {
 // We throw all exceptions here:
 void check_master_key(const std::string& key);
-};  // namespace detail
+}  // namespace detail
 
 bool ScriptRecipe::check() const {
     // Check the master key

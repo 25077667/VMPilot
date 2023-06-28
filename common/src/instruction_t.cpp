@@ -17,7 +17,7 @@ namespace detail {
  * Salt: nounce field
  */
 Hash_val_t Hash(const Instruction_t& inst) noexcept;
-};  // namespace detail
+}  // namespace detail
 
 bool VMPilot::Common::Instruction::check(const Instruction_t& inst) noexcept {
     return detail::Hash(inst) == inst.checksum;

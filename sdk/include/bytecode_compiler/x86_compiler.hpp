@@ -21,6 +21,6 @@ class X86Compiler : public CompilerBase {
     X86Compiler() : CompilerBase("x86") {}
 };
 
-};  // namespace VMPilot::SDK::BytecodeCompiler
+}  // namespace VMPilot::SDK::BytecodeCompiler
 
 #endif  // __SDK_X86_COMPILER_HPP__

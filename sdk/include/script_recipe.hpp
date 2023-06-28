@@ -24,6 +24,6 @@ class ScriptRecipe {
      */
     ScriptRecipe(nlohmann::json script) : script(script) { check(); }
 };
-};  // namespace VMPilot::SDK
+}  // namespace VMPilot::SDK
 
 #endif  // __SDK_SCRIPT_RECIPE_HPP__

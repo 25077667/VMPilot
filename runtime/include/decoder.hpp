@@ -23,6 +23,6 @@ class Decoder {
     std::string key_;
     std::unique_ptr<VMPilot::Common::Opcode_table> decode_table_;
 };
-};  // namespace VMPilot::Runtime
+}  // namespace VMPilot::Runtime
 
 #endif

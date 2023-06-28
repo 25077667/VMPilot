@@ -21,6 +21,6 @@ class X86_64Compiler : public _NotImplementedYet {
     X86_64Compiler() : _NotImplementedYet("x86_64") {}
 };
 
-};  // namespace VMPilot::SDK::BytecodeCompiler
+}  // namespace VMPilot::SDK::BytecodeCompiler
 
 #endif  // __SDK_X86_64_COMPILER_HPP__

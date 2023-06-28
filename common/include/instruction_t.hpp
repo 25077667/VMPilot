@@ -58,6 +58,6 @@ struct Instruction {
         const Instruction_t& inst) noexcept;
 };  // struct Instruction helpers
 
-};  // namespace Common
-};  // namespace VMPilot
+}  // namespace Common
+}  // namespace VMPilot
 #endif

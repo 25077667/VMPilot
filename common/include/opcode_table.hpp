@@ -76,6 +76,6 @@ class Opcode_table_generator {
     OID_to_OI OID_to_OI_;
 };
 
-};  // namespace VMPilot::Common
+}  // namespace VMPilot::Common
 
 #endif

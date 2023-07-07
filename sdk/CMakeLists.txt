@@ -1,4 +1,8 @@
 function (configure_retdec)
+    # templararly bypass here, because of the retdec compile overhead
+    # We might add it back later (or we would seperate it into submodules)
+    return()
+
     # Disable Werror for retdec, only if not Windows (Windows doesn't support -Wno-error)
     if (NOT WIN32)
         set (ORIG_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

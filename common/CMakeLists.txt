@@ -15,9 +15,10 @@ set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/file_type_parser.cpp
 )
 
-# set third party libraries
-find_package(OpenSSL REQUIRED)
-set (LIBS ${LIBS} OpenSSL::Crypto)
+# Add the library dependencies dir BLAKE3
+set (LIBS ${LIBS}
+    ${CMAKE_BINARY_DIR}/_deps/blake3-build/libblake3.a
+)
 
 include_directories (${INCLUDE_DIRS})
 

@@ -14,7 +14,7 @@ set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/x86_64_compiler.cpp
 )
 
-set (LIBS ${LIBS} opcode_table nlohmann_json::nlohmann_json retdec::retdec)
+set (LIBS ${LIBS} opcode_table nlohmann_json::nlohmann_json ${RETDEC_LIBRARIES})
 
 include_directories(${INCLUDE_DIRS})
 

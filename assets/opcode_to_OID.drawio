@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="8jeaId0-kltd9O_hGAqO" name="第1頁">
-        <mxGraphModel dx="900" dy="933" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1350" dy="768" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -98,7 +98,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="33" value="Calculate ID&lt;br&gt;(SHA1, salt=key)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="46" vertex="1">
+                <mxCell id="33" value="Calculate ID&lt;br&gt;(BLAKE3, salt=key)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="46" vertex="1">
                     <mxGeometry x="75" width="120" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="47" value="Compile time" style="shape=process;whiteSpace=wrap;html=1;backgroundOutline=1;" parent="48" vertex="1">

@@ -18,6 +18,7 @@ set (SRC_FILES ${SRC_FILES}
 # Add the library dependencies dir BLAKE3
 set (LIBS ${LIBS}
     ${CMAKE_BINARY_DIR}/_deps/blake3-build/libblake3.a
+    ${OPENSSL_LIBRARIES}
 )
 
 include_directories (${INCLUDE_DIRS})

@@ -78,23 +78,6 @@ endif ()
 # add dependencies
 include(cmake/CPM.cmake)
 CPMAddPackage("gh:nlohmann/json@3.11.2")
-CPMAddPackage(
-    NAME BLAKE3-cmake
-    GITHUB_REPOSITORY 25077667/BLAKE3-cmake
-    GIT_TAG 1.4.0
-)
-# Set BLAKE3 include directory variable, link BLAKE3 library
-set(BLAKE3_INCLUDE_DIR ${CMAKE_BINARY_DIR}/_deps/blake3-src/c/)
-set(BLAKE3_LIBRARY ${CMAKE_BINARY_DIR}/_deps/blake3-build/libblake3.a)
-
-CPMAddPackage(
-    NAME botan-cmake
-    GIT_TAG 3.0.0-rc2
-    GITHUB_REPOSITORY "25077667/botan-cmake"
-)
-# Set botan include directory variable, link botan library
-set(BOTAN_INCLUDE_DIR ${CMAKE_BINARY_DIR}/_deps/botan-src/build/include/)
-set(BOTAN_LIBRARY ${CMAKE_BINARY_DIR}/_deps/botan-src/libbotan-3.a)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

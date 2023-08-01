@@ -1,7 +1,7 @@
 #include <cstring>
 #include <functional>
 
-#include <crypto.hpp>
+#include <VMPilot_crypto.hpp>
 #include <instruction_t.hpp>
 
 using Instruction_t = VMPilot::Common::Instruction_t;
@@ -38,7 +38,7 @@ void VMPilot::Common::Instruction::decrypt(Instruction_t& inst,
 
     // Decrypt the instruction
     const auto decrypted_data =
-        VMPilot::Common::Crypto::Decrypt_AES_256_CBC_PKCS7(
+        VMPilot::Crypto::Decrypt_AES_256_CBC_PKCS7(
             std::vector<uint8_t>(data.begin(), data.end()), padded_key);
     ::memcpy(&inst, decrypted_data.data(), sizeof(Instruction_t));
 
@@ -70,8 +70,7 @@ Hash_val_t detail::Hash(const Instruction_t& inst) noexcept {
     std::string salt = std::to_string(inst.nounce);
 
     // Hash the data
-    // VMPilot::Common::Crypto::SHA256();
-    const auto& hash_str = VMPilot::Common::Crypto::SHA256(
+    const auto& hash_str = VMPilot::Crypto::SHA256(
         std::vector<uint8_t>(data.begin(), data.end()),
         std::vector<uint8_t>(salt.begin(), salt.end()));
 

@@ -1,7 +1,8 @@
+add_subdirectory(crypto)
+
 set (INCLUDE_DIRS ${INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${BLAKE3_INCLUDE_DIR}
-    ${BOTAN_INCLUDE_DIR}
+    ${CRYPTO_INCLUDE_DIR}
 )
 include_directories (${INCLUDE_DIRS})
 
@@ -13,13 +14,11 @@ set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/opcode_table.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/instruction_t.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/file_type_parser.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/crypto.cpp
 )
 
 # Add the library dependencies dir BLAKE3
 set (LIBS ${LIBS}
-    ${BLAKE3_LIBRARY}
-    ${BOTAN_LIBRARY}
+    crypto
 )
 
 add_library(${LIB_NAME} STATIC ${SRC_FILES})

@@ -1,7 +1,7 @@
-#include <openssl/evp.h>
 #include <cstring>
 #include <functional>
 
+#include <VMPilot_crypto.hpp>
 #include <instruction_t.hpp>
 
 using Instruction_t = VMPilot::Common::Instruction_t;
@@ -37,15 +37,13 @@ void VMPilot::Common::Instruction::decrypt(Instruction_t& inst,
         padded_key.resize(32);
 
     // Decrypt the instruction
-    EVP_CIPHER_CTX* ctx = EVP_CIPHER_CTX_new();
-    EVP_DecryptInit_ex(
-        ctx, EVP_aes_256_cbc(), NULL,
-        reinterpret_cast<const unsigned char*>(padded_key.data()), NULL);
-    EVP_DecryptUpdate(ctx, reinterpret_cast<unsigned char*>(&inst), NULL,
-                      reinterpret_cast<const unsigned char*>(data.data()),
-                      sizeof(inst));
-    EVP_DecryptFinal_ex(ctx, reinterpret_cast<unsigned char*>(&inst), NULL);
-    EVP_CIPHER_CTX_free(ctx);
+    const auto decrypted_data =
+        VMPilot::Crypto::Decrypt_AES_256_CBC_PKCS7(
+            std::vector<uint8_t>(data.begin(), data.end()), padded_key);
+    ::memcpy(&inst, decrypted_data.data(), sizeof(Instruction_t));
+
+    // Update the checksum
+    update_checksum(inst);
 }
 
 void VMPilot::Common::Instruction::update_checksum(
@@ -72,21 +70,11 @@ Hash_val_t detail::Hash(const Instruction_t& inst) noexcept {
     std::string salt = std::to_string(inst.nounce);
 
     // Hash the data
-    EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
-    const EVP_MD* md = EVP_sha256();
-    unsigned char md_value[EVP_MAX_MD_SIZE];
-    unsigned int md_len;
+    const auto& hash_str = VMPilot::Crypto::SHA256(
+        std::vector<uint8_t>(data.begin(), data.end()),
+        std::vector<uint8_t>(salt.begin(), salt.end()));
 
-    EVP_DigestInit_ex(mdctx, md, NULL);
-    EVP_DigestUpdate(mdctx, data.c_str(), data.size());
-    EVP_DigestUpdate(mdctx, salt.c_str(), salt.size());
-    EVP_DigestFinal_ex(mdctx, md_value, &md_len);
-    EVP_MD_CTX_free(mdctx);
-
-    // Convert the hash to a number
-    std::string hash_str;
-    for (unsigned int i = 0; i < md_len; i++)
-        hash_str += std::to_string(md_value[i]);
-
-    return std::hash<std::string>{}(hash_str);
+    // hash that string
+    return std::hash<std::string>{}(
+        std::string(hash_str.begin(), hash_str.end()));
 }

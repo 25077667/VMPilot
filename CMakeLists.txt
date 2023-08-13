@@ -43,7 +43,7 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
         if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto=auto")
         elseif (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto=thin")
         endif()
@@ -78,13 +78,6 @@ endif ()
 # add dependencies
 include(cmake/CPM.cmake)
 CPMAddPackage("gh:nlohmann/json@3.11.2")
-CPMAddPackage(
-    NAME BLAKE3-cmake
-    GITHUB_REPOSITORY 25077667/BLAKE3-cmake
-    GIT_TAG 1.4.0
-)
-
-find_package(OpenSSL REQUIRED)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

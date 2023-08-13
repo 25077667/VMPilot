@@ -1,9 +1,10 @@
+add_subdirectory(crypto)
+
 set (INCLUDE_DIRS ${INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-
-    # Include BLAKE3 header files
-    ${CMAKE_BINARY_DIR}/_deps/blake3-src/c/
+    ${CRYPTO_INCLUDE_DIR}
 )
+include_directories (${INCLUDE_DIRS})
 
 # setup library source name
 set(LIB_NAME "opcode_table")
@@ -17,11 +18,8 @@ set (SRC_FILES ${SRC_FILES}
 
 # Add the library dependencies dir BLAKE3
 set (LIBS ${LIBS}
-    ${CMAKE_BINARY_DIR}/_deps/blake3-build/libblake3.a
-    ${OPENSSL_LIBRARIES}
+    crypto
 )
-
-include_directories (${INCLUDE_DIRS})
 
 add_library(${LIB_NAME} STATIC ${SRC_FILES})
 target_link_libraries(${LIB_NAME} ${LIBS})

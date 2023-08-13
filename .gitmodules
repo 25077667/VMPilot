@@ -1,0 +1,3 @@
+[submodule "common/crypto"]
+path = common/crypto
+url = ../VMPilot-crypto.git

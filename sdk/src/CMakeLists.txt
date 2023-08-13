@@ -1,6 +1,18 @@
+# https://github.com/serge1/ELFIO/issues/124
+# We would like to use the latest version of ELFIO from the author's repository
+# We are waiting for the author to release a new version
+# For now, we use the main_src tag for stability issues
+CPMAddPackage(
+    NAME ELFIO
+    GITHUB_REPOSITORY "25077667/ELFIO"
+    GIT_TAG "main_src"
+)
+
 set (INCLUDE_DIRS 
     ${INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
+    ${CMAKE_SOURCE_DIR}/common/include
+    ${CMAKE_BINARY_DIR}/_deps/elfio-src/
 )
 
 set (TARGET_NAME VMPilot_SDK_LIB)

@@ -14,6 +14,7 @@ set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/opcode_table.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/instruction_t.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/file_type_parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/utilities.cpp
 )
 
 # Add the library dependencies dir BLAKE3

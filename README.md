@@ -36,7 +36,6 @@ square:
 # Dependencies
 - [CMake](https://cmake.org/download/) (3.20 or higher)
 - Supporting C++17 or higher compiler
-- OpenSSL 3.1.1
 - autotools (autoconf, automake, and libtool) for retdec
 
 ### Underlining Dependencies
@@ -44,6 +43,7 @@ It would be fetched automatically by CPM(CMake Package Manager) during the build
 - [nlohmann/json](https://github.com/nlohmann/json)
 - [25077667/retdec](https://github.com/25077667/retdec) for SDK
     > It's our patched version of avast/retdec, which is used to decompile the target binary.
+- [crypto](https://github.com/25077667/VMPilot-crypto) for common crypto functions
 
 ## Optional Dependencies
 - [Ninja](https://github.com/ninja-build/ninja)
@@ -100,9 +100,9 @@ further information about the details, please feel free to contact me.
     - [ ] VMPilot VM
 
 - Miscellaneous
-    - [ ] Migrate OpenSSL to [Botan](https://github.com/randombit/botan)
-        - [ ] Remove OpenSSL dependency
-        - [ ] CMake CPM support
+    - [x] Migrate OpenSSL to [Botan](https://github.com/randombit/botan)
+        - [x] Remove OpenSSL dependency
+        - [x] CMake CPM support
     - [ ] Documentation
     - [ ] Unit tests
     - [ ] CI/CD

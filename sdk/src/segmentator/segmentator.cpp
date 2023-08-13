@@ -9,7 +9,7 @@
 using namespace VMPilot::SDK::Segmentator;
 
 namespace detail {
-std::string get_file_type(const std::string& filename);
+std::string get_file_type(const std::string& filename) noexcept;
 };
 
 Segmentator::Segmentator(const std::string& filename) : m_filename(filename) {
@@ -35,11 +35,12 @@ Segmentator::Segmentator(const std::string& filename) : m_filename(filename) {
         std::cerr << "Error: Unknown file type" << std::endl;
     }
 }
+
 void Segmentator::do_segmentation() noexcept {
     m_callback(m_filename);
 }
 
-std::string detail::get_file_type(const std::string& filename) {
+std::string detail::get_file_type(const std::string& filename) noexcept {
     try {
         // Get the file type
         const auto& fileTypeParser = VMPilot::Common::FileTypeParser(filename);

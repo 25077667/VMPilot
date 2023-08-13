@@ -78,6 +78,7 @@ endif ()
 # add dependencies
 include(cmake/CPM.cmake)
 CPMAddPackage("gh:nlohmann/json@3.11.2")
+CPMAddPackage("gh:gabime/spdlog@1.12.0")
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

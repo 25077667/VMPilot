@@ -44,6 +44,9 @@ It would be fetched automatically by CPM(CMake Package Manager) during the build
 - [25077667/retdec](https://github.com/25077667/retdec) for SDK
     > It's our patched version of avast/retdec, which is used to decompile the target binary.
 - [crypto](https://github.com/25077667/VMPilot-crypto) for common crypto functions
+- [EFLIO](https://github.com/serge1/ELFIO) for SDK
+    > It's used to parse ELF files.
+- [spdlog](https://github.com/gabime/spdlog) for common logging functions
 
 ## Optional Dependencies
 - [Ninja](https://github.com/ninja-build/ninja)

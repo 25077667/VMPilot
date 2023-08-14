@@ -19,7 +19,7 @@ std::unique_ptr<CompilerBase> CompilerFactory::CreateCompiler(
 }
 
 std::vector<uint8_t> _NotImplementedYet::Compile(
-    [[maybe_unused]] const ScriptRecipe& script) {
+    [[maybe_unused]] const BytecodeCompileRecipe& script) {
     throw std::runtime_error(
         "Not implemented yet, but it is in the future work.");
 }

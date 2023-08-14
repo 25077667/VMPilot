@@ -17,7 +17,7 @@ set (INCLUDE_DIRS
 
 set (TARGET_NAME VMPilot_SDK_LIB)
 set (SRC_FILE ${SRC_FILE}
-    ${CMAKE_CURRENT_SOURCE_DIR}/script_recipe.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BytecodeCompileRecipe.cpp
 )
 
 include_directories(${INCLUDE_DIRS})

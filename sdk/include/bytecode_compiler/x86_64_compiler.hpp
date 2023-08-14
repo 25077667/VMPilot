@@ -13,7 +13,7 @@ class X86_64Compiler : public _NotImplementedYet {
          * @param script The script to compile.
          * @return std::vector<uint8_t> The compiled bytecode.
          */
-    std::vector<uint8_t> Compile(const ScriptRecipe& script) override;
+    std::vector<uint8_t> Compile(const BytecodeCompileRecipe& script) override;
 
     /**
          * @brief Construct a new X86_64 Compiler object

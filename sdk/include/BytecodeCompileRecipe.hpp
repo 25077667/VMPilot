@@ -1,10 +1,10 @@
-#ifndef __SDK_SCRIPT_RECIPE_HPP__
-#define __SDK_SCRIPT_RECIPE_HPP__
+#ifndef __SDK_BytecodeCompileRecipe_HPP__
+#define __SDK_BytecodeCompileRecipe_HPP__
 
 #include <nlohmann/json.hpp>
 
 namespace VMPilot::SDK {
-class ScriptRecipe {
+class BytecodeCompileRecipe {
     nlohmann::json script;
     /**
      * @brief Check if the script is valid.
@@ -22,8 +22,8 @@ class ScriptRecipe {
      * 
      * @param script The script to compile.
      */
-    ScriptRecipe(nlohmann::json script) : script(script) { check(); }
+    BytecodeCompileRecipe(nlohmann::json script) : script(script) { check(); }
 };
 }  // namespace VMPilot::SDK
 
-#endif  // __SDK_SCRIPT_RECIPE_HPP__
+#endif  // __SDK_BytecodeCompileRecipe_HPP__

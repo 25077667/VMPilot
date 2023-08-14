@@ -5,7 +5,7 @@
  * @brief A factory class for creating bytecode compilers.
  */
 
-#include <script_recipe.hpp>
+#include <BytecodeCompileRecipe.hpp>
 
 #include <memory>
 #include <string>
@@ -23,7 +23,7 @@ class CompilerBase {
      * @param script The script to compile.
      * @return std::vector<uint8_t> The compiled bytecode.
      */
-    virtual std::vector<uint8_t> Compile(const ScriptRecipe& script) = 0;
+    virtual std::vector<uint8_t> Compile(const BytecodeCompileRecipe& script) = 0;
 
     /**
      * @brief Get the name of the compiler.
@@ -65,7 +65,7 @@ class _NotImplementedYet : public CompilerBase {
      * @param script The script to compile.
      * @return std::vector<uint8_t> The compiled bytecode.
      */
-    std::vector<uint8_t> Compile(const ScriptRecipe& script) override;
+    std::vector<uint8_t> Compile(const BytecodeCompileRecipe& script) override;
 
     /**
      * @brief Construct a new _NotImplementedYet object

@@ -1,4 +1,4 @@
-#include <script_recipe.hpp>
+#include <BytecodeCompileRecipe.hpp>
 #include <string>
 
 using namespace VMPilot::SDK;
@@ -8,7 +8,7 @@ namespace detail {
 void check_master_key(const std::string& key);
 }  // namespace detail
 
-bool ScriptRecipe::check() const {
+bool BytecodeCompileRecipe::check() const {
     // Check the master key
     if (script.contains("master_key")) {
         detail::check_master_key(script["master_key"]);

@@ -2,7 +2,7 @@
 
 using namespace VMPilot::SDK::BytecodeCompiler;
 
-std::vector<uint8_t> X86_64Compiler::Compile(const ScriptRecipe& script) {
+std::vector<uint8_t> X86_64Compiler::Compile(const BytecodeCompileRecipe& script) {
     ::_NotImplementedYet::Compile(script);
     return {};
 }

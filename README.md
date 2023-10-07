@@ -36,13 +36,12 @@ square:
 # Dependencies
 - [CMake](https://cmake.org/download/) (3.20 or higher)
 - Supporting C++17 or higher compiler
-- autotools (autoconf, automake, and libtool) for retdec
 
 ### Underlining Dependencies
 It would be fetched automatically by CPM(CMake Package Manager) during the build process.
 - [nlohmann/json](https://github.com/nlohmann/json)
-- [25077667/retdec](https://github.com/25077667/retdec) for SDK
-    > It's our patched version of avast/retdec, which is used to decompile the target binary.
+- [25077667/capstone-cpp](https://github.com/25077667/capstone-cpp) for SDK
+    > It's our wrapper for [capstone](https://github.com/capstone-engine/capstone).
 - [crypto](https://github.com/25077667/VMPilot-crypto) for common crypto functions
 - [EFLIO](https://github.com/serge1/ELFIO) for SDK
     > It's used to parse ELF files.

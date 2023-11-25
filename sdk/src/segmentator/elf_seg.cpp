@@ -19,7 +19,7 @@ uint64_t get_vmp_addr(const ELFIO::symbol_section_accessor& accessor,
 
     auto size = accessor.get_symbols_num();
     for (size_t i = 0; i < size; i++) {
-        ELFIO::Elf64_Addr value;
+        ELFIO::Elf64_Addr value = 0;
         std::string name;
         ELFIO::Elf_Xword size;
         unsigned char bind;
@@ -72,7 +72,7 @@ std::pair<uint64_t, uint64_t> get_begin_end_addr(
 }
 }  // namespace
 
-void VMPilot::SDK::Segmentator::ELF_Segmentator::operator()() noexcept {
+void VMPilot::SDK::Segmentator::ELF_Segmentator::segmentation() noexcept {
 
     ELFIO::elfio elf_reader;
     if (!elf_reader.load(m_filename)) {

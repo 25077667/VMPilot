@@ -13,13 +13,14 @@ class ELF_Segmentator : public Segmentator {
    protected:
     virtual void segmentation() noexcept override;
 
+
    public:
     /**
      * @brief Construct a new ELF_Segmentator object
      */
     ELF_Segmentator(const std::string& filename)
         : Segmentator(filename, "ELF") {}
-    ~ELF_Segmentator() = default;
+    virtual ~ELF_Segmentator() = default;
 };
 };  // namespace VMPilot::SDK::Segmentator
 

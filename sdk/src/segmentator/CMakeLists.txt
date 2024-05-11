@@ -10,10 +10,18 @@ set (TARGER_NAME VMPilot_SDK_Segmentator)
 
 set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/segmentator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/pe_seg.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/macho_seg.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/elf_seg.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ELFHandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/InsnSegmentator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/X86Segmentator.cpp
 )
+
+if (WIN32)
+    set(SRC_FILES ${SRC_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/pe_seg.cpp)
+elseif (APPLE)
+    set(SRC_FILES ${SRC_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/macho_seg.cpp)
+elseif (UNIX AND NOT APPLE)
+    set(SRC_FILES ${SRC_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/elf_seg.cpp)
+endif()
 
 set (LIBS ${LIBS}
     ${RETDEC_LIBRARIES}

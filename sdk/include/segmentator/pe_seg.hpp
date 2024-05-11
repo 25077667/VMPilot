@@ -18,7 +18,7 @@ class PE_Segmentator : public Segmentator {
      * @brief Construct a new PE_Segmentator object
      */
     PE_Segmentator(const std::string& filename) : Segmentator(filename, "PE") {}
-    ~PE_Segmentator() = default;
+    virtual ~PE_Segmentator() = default;
 };
 };  // namespace VMPilot::SDK::Segmentator
 #endif

@@ -19,7 +19,7 @@ class MachO_Segmentator : public Segmentator {
     */
     MachO_Segmentator(const std::string& filename)
         : Segmentator(filename, "Mach-O") {}
-    ~MachO_Segmentator() = default;
+    virtual ~MachO_Segmentator() = default;
 };
 };  // namespace VMPilot::SDK::Segmentator
 

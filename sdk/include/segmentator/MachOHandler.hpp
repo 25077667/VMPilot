@@ -38,6 +38,11 @@ class MachOFileHandlerStrategy : public FileHandlerStrategy {
      */
     virtual uint64_t doGetTextBaseAddr() noexcept override;
 
+    /**
+     * @brief Get the native symbol table.
+     */
+    virtual NativeSymbolTable doGetNativeSymbolTable() noexcept;
+
    private:
     // Internal implementations that perform the actual logic
     std::pair<uint64_t, uint64_t> doGetBeginEndAddrIntl() noexcept;

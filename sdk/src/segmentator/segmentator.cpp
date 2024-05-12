@@ -106,7 +106,8 @@ void VMPilot::SDK::Segmentator::Segmentator::segmentation() noexcept {
         return;
     }
 
-    const auto native_functions = m_arch_handler->getNativeFunctions();
+    const auto native_functions =
+        m_arch_handler->getNativeFunctions(native_symbol_table);
     if (native_functions.empty()) {
         spdlog::error("Segmentation failed: native_functions empty");
         return;

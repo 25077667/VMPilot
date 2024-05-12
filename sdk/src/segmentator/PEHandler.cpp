@@ -74,6 +74,12 @@ uint64_t PEFileHandlerStrategy::doGetTextBaseAddr() noexcept {
     return -1;
 }
 
+NativeSymbolTable PEFileHandlerStrategy::doGetNativeSymbolTable() noexcept {
+    spdlog::error(
+        "PEFileHandlerStrategy::doGetNativeSymbolTable not implemented");
+    return NativeSymbolTable();
+}
+
 std::pair<uint64_t, uint64_t>
 PEFileHandlerStrategy::doGetBeginEndAddrIntl() noexcept {
     spdlog::error(

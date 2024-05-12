@@ -38,7 +38,9 @@ class FileHandlerStrategy {
     }
     std::vector<uint8_t> getTextSection() { return doGetTextSection(); }
     uint64_t getTextBaseAddr() { return doGetTextBaseAddr(); }
-    NativeSymbolTable getNativeSymbolTable() { return doGetNativeSymbolTable(); }
+    NativeSymbolTable getNativeSymbolTable() {
+        return doGetNativeSymbolTable();
+    }
 };
 
 // Strategy for architecture handling
@@ -64,7 +66,7 @@ class ArchHandlerStrategy {
      * @return std::vector<std::unique_ptr<NativeFunctionBase>> The native functions
      */
     virtual std::vector<std::unique_ptr<NativeFunctionBase>>
-    doGetNativeFunctions();
+    doGetNativeFunctions(const NativeSymbolTable& native_symbol_table);
 
    public:
     virtual ~ArchHandlerStrategy() = default;
@@ -87,8 +89,9 @@ class ArchHandlerStrategy {
      * 
      * @return std::vector<std::unique_ptr<NativeFunctionBase>> The native functions
      */
-    std::vector<std::unique_ptr<NativeFunctionBase>> getNativeFunctions() {
-        return doGetNativeFunctions();
+    std::vector<std::unique_ptr<NativeFunctionBase>> getNativeFunctions(
+        const NativeSymbolTable& native_symbol_table) {
+        return doGetNativeFunctions(native_symbol_table);
     }
 };
 

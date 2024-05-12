@@ -25,7 +25,8 @@ class X86Handler : public ArchHandlerStrategy {
                         const uint64_t base_addr) noexcept override;
 
     virtual std::vector<std::unique_ptr<NativeFunctionBase>>
-    doGetNativeFunctions() noexcept override;
+    doGetNativeFunctions(
+        const NativeSymbolTable& native_symbol_table) noexcept override;
 };
 
 std::unique_ptr<X86Handler::Impl> make_x86_handler_impl(Mode mode);

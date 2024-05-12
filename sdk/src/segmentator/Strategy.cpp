@@ -23,7 +23,8 @@ uint64_t FileHandlerStrategy::doGetTextBaseAddr() noexcept {
 }
 
 NativeSymbolTable FileHandlerStrategy::doGetNativeSymbolTable() noexcept {
-    spdlog::error("FileHandlerStrategy::doGetNativeSymbolTable not implemented");
+    spdlog::error(
+        "FileHandlerStrategy::doGetNativeSymbolTable not implemented");
     return NativeSymbolTable();
 }
 
@@ -38,9 +39,9 @@ bool ArchHandlerStrategy::doLoad(const std::vector<uint8_t>& code,
     return false;
 }
 
-// doGetNativeFunctions
 std::vector<std::unique_ptr<NativeFunctionBase>>
-ArchHandlerStrategy::doGetNativeFunctions() {
+ArchHandlerStrategy::doGetNativeFunctions(
+    [[maybe_unused]] const NativeSymbolTable& native_symbol_table) {
     spdlog::error("ArchHandlerStrategy::doGetNativeFunctions not implemented");
     return std::vector<std::unique_ptr<NativeFunctionBase>>();
 }

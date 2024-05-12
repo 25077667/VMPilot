@@ -39,6 +39,11 @@ class ELFFileHandlerStrategy : public FileHandlerStrategy {
      */
     virtual uint64_t doGetTextBaseAddr() noexcept override;
 
+    /**
+     * @brief Get the native symbol table.
+     */
+    virtual NativeSymbolTable doGetNativeSymbolTable() noexcept;
+
    private:
     /**
      * Retrieves the index of an entry in the ".dynsym" section based on its signature.

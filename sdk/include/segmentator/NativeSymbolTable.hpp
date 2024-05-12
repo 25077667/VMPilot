@@ -22,13 +22,38 @@ enum class SymbolType {
     // Extend with additional COFF-specific types if necessary
 };
 
+enum class SymbolSource {
+    DYNAMIC,  // Dynamic symbol
+    STATIC    // Static symbol
+};
+
+enum class SymbolVisibility {
+    DEFAULT,   // Default visibility
+    HIDDEN,    // Hidden visibility
+    PROTECTED  // Protected visibility
+};
+
+enum class SymbolBinding {
+    LOCAL,        // Local binding
+    GLOBAL,       // Global binding
+    WEAK,         // Weak binding
+    LOOS = 10,    // OS-specific low
+    HIOS = 12,    // OS-specific high
+    LOPROC = 13,  // Processor-specific low
+    HIPROC = 15   // Processor-specific high
+};
+
 // Structure to represent a symbol table entry
 struct NativeSymbolTableEntry {
-    std::string name;  // Symbol name
-    uint64_t address;  // Address of the symbol
-    uint64_t size;     // Size of the symbol
-    SymbolType type;   // Type of the symbol
-    bool isGlobal;     // Visibility - global or local
+    std::string name;             // Symbol name
+    uint64_t address;             // Address of the symbol
+    uint64_t size;                // Size of the symbol
+    SymbolSource source;          // Source of the symbol
+    SymbolType type;              // Type of the symbol
+    SymbolVisibility visibility;  // Visibility of the symbol
+    SymbolBinding binding;        // Binding of the symbol
+    uint64_t sectionNumber;       // Section number of the symbol
+    uint64_t sectionIndex;        // Section index of the symbol
 
     std::unordered_map<std::string, std::variant<int, std::string, uint64_t>>
         additionalAttributes;
@@ -37,8 +62,27 @@ struct NativeSymbolTableEntry {
         : name(""),
           address(0),
           size(0),
+          source(SymbolSource::STATIC),
           type(SymbolType::NOTYPE),
-          isGlobal(false) {}
+          visibility(SymbolVisibility::DEFAULT),
+          binding(SymbolBinding::LOCAL),
+          sectionNumber(0),
+          sectionIndex(0) {}
+
+    NativeSymbolTableEntry(const std::string& name_, uint64_t address_,
+                           uint64_t size_, SymbolSource source_,
+                           SymbolType type_, SymbolVisibility visibility_,
+                           SymbolBinding binding_, uint64_t sectionNumber_,
+                           uint64_t sectionIndex_)
+        : name(name_),
+          address(address_),
+          size(size_),
+          source(source_),
+          type(type_),
+          visibility(visibility_),
+          binding(binding_),
+          sectionNumber(sectionNumber_),
+          sectionIndex(sectionIndex_) {}
 
     void setAttribute(const std::string& key,
                       const std::variant<int, std::string, uint64_t>& value) {

@@ -37,7 +37,8 @@ bool X86Handler::doLoad(const std::vector<uint8_t>& code,
 }
 
 std::vector<std::unique_ptr<NativeFunctionBase>>
-X86Handler::doGetNativeFunctions() noexcept {
+X86Handler::doGetNativeFunctions(
+    [[maybe_unused]] const NativeSymbolTable& native_symbol_table) noexcept {
     auto& native_functions = this->pImpl->native_functions;
     if (native_functions.empty()) {
         // TODO: Implement this function

@@ -60,6 +60,12 @@ uint64_t MachOFileHandlerStrategy::doGetTextBaseAddr() noexcept {
     return -1;
 }
 
+NativeSymbolTable MachOFileHandlerStrategy::doGetNativeSymbolTable() noexcept {
+    spdlog::error(
+        "MachOFileHandlerStrategy::doGetNativeSymbolTable not implemented");
+    return NativeSymbolTable();
+}
+
 std::pair<uint64_t, uint64_t>
 MachOFileHandlerStrategy::doGetBeginEndAddrIntl() noexcept {
     spdlog::error(

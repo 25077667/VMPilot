@@ -13,7 +13,7 @@ namespace VMPilot::SDK::Segmentator {
 class X86Handler : public ArchHandlerStrategy {
    public:
     X86Handler(Mode mode = Mode::MODE_64);
-    virtual ~X86Handler() = default;
+    virtual ~X86Handler();
 
    private:
     struct Impl;

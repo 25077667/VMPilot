@@ -1,6 +1,10 @@
 #ifndef __SDK_SEGMENTATOR_HPP__
 #define __SDK_SEGMENTATOR_HPP__
 
+#include <Strategy.hpp>
+#include <file_type_parser.hpp>
+
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <string>
@@ -8,26 +12,20 @@
 namespace VMPilot::SDK::Segmentator {
 class Segmentator {
    protected:
-    std::string m_filename;
-    std::string m_filetype;
-    std::vector<uint8_t> m_code;
-    uint64_t m_base_addr = -1;
-    uint64_t m_begin_addr = -1;
-    uint64_t m_end_addr = -1;
+    VMPilot::Common::FileMetadata m_metadata;
+    std::unique_ptr<FileHandlerStrategy> m_file_handler;
+    std::unique_ptr<ArchHandlerStrategy> m_arch_handler;
+
+    friend std::unique_ptr<Segmentator> create_segmentator(
+        const std::string& filename) noexcept;
 
    protected:
     virtual void segmentation() noexcept = 0;
 
    public:
-    Segmentator(const std::string& filename)
-        : m_filename(filename), m_filetype("unknown") {}
-    Segmentator(const std::string& filename, const std::string& filetype)
-        : m_filename(filename), m_filetype(filetype) {}
-
+    // not allowed to default construct, please use create_segmentator
+    Segmentator() = delete;
     virtual ~Segmentator() = default;
-
-    void operator()() noexcept { segmentation(); }
-    std::string get_filetype() const noexcept { return m_filetype; }
 };
 
 std::unique_ptr<Segmentator> create_segmentator(

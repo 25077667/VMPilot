@@ -29,6 +29,8 @@ VMPilot::SDK::Segmentator ::make_x86_handler_impl(Mode mode) {
         std::vector<Capstone::Instruction>(), -1);
 }
 
+X86Handler::~X86Handler() = default;
+
 bool X86Handler::doLoad(const std::vector<uint8_t>& code,
                         const uint64_t base_addr) noexcept {
     auto& impl = this->pImpl;

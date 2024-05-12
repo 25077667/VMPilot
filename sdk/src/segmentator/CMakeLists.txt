@@ -17,14 +17,6 @@ set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/NativeSymbolTable.cpp
 )
 
-if (WIN32)
-    set(SRC_FILES ${SRC_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/pe_seg.cpp)
-elseif (APPLE)
-    set(SRC_FILES ${SRC_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/macho_seg.cpp)
-elseif (UNIX AND NOT APPLE)
-    set(SRC_FILES ${SRC_FILES} ${CMAKE_CURRENT_SOURCE_DIR}/elf_seg.cpp)
-endif()
-
 set (LIBS ${LIBS}
     ${RETDEC_LIBRARIES}
 )

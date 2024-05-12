@@ -22,6 +22,11 @@ uint64_t FileHandlerStrategy::doGetTextBaseAddr() noexcept {
     return -1;
 }
 
+NativeSymbolTable FileHandlerStrategy::doGetNativeSymbolTable() noexcept {
+    spdlog::error("FileHandlerStrategy::doGetNativeSymbolTable not implemented");
+    return NativeSymbolTable();
+}
+
 bool ArchHandlerStrategy::doLoad(const std::vector<uint8_t>& code,
                                  const uint64_t base_addr) {
     // Emitting error message, not implemented

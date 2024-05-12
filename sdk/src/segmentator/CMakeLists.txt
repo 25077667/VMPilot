@@ -13,6 +13,8 @@ set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/ELFHandler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Strategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/X86Handler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/NativeFunctionBase.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/NativeSymbolTable.cpp
 )
 
 if (WIN32)

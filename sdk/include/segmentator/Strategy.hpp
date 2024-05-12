@@ -4,6 +4,8 @@
 
 #include <ArchEnum.hpp>
 #include <ModeEnum.hpp>
+#include <NativeFunctionBase.hpp>
+#include <NativeSymbolTable.hpp>
 
 #include <cstdint>
 #include <memory>
@@ -12,29 +14,6 @@
 #include <vector>
 
 namespace VMPilot::SDK::Segmentator {
-
-// Which would be inherited by the derived class for ELF, PE, and so on
-class NativeFunctionBase {
-   protected:
-    uint64_t m_addr;
-    uint64_t m_size;
-    std::string m_name;
-    std::vector<uint8_t> m_code;
-    std::vector<uint8_t> globalData;
-    friend class ArchHandlerStrategy;
-
-   public:
-    NativeFunctionBase(uint64_t addr, uint64_t size, std::string name,
-                       std::vector<uint8_t> code)
-        : m_addr(addr), m_size(size), m_name(name), m_code(code) {}
-
-    virtual ~NativeFunctionBase() = default;
-    uint64_t getAddr() const { return m_addr; }
-    uint64_t getSize() const { return m_size; }
-    std::string getName() const { return m_name; }
-    std::vector<uint8_t> getCode() const { return m_code; }
-    std::vector<uint8_t> getGlobalData() const { return globalData; }
-};
 
 // Strategy for file handling
 class FileHandlerStrategy {
@@ -50,6 +29,8 @@ class FileHandlerStrategy {
 
     virtual uint64_t doGetTextBaseAddr() noexcept;
 
+    virtual NativeSymbolTable doGetNativeSymbolTable() noexcept;
+
    public:
     virtual ~FileHandlerStrategy() = default;
     std::pair<uint64_t, uint64_t> getBeginEndAddr() {
@@ -57,6 +38,7 @@ class FileHandlerStrategy {
     }
     std::vector<uint8_t> getTextSection() { return doGetTextSection(); }
     uint64_t getTextBaseAddr() { return doGetTextBaseAddr(); }
+    NativeSymbolTable getNativeSymbolTable() { return doGetNativeSymbolTable(); }
 };
 
 // Strategy for architecture handling

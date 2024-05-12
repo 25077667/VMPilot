@@ -87,6 +87,9 @@ class ELFFileHandlerStrategy : public FileHandlerStrategy {
      * @return A vector of uint8_t values representing the entire chuck of the .text section.
      */
     std::vector<uint8_t> doGetTextSectionIntl() noexcept;
+
+    // doGetNativeSymbolTableIntl
+    NativeSymbolTable doGetNativeSymbolTableIntl() noexcept;
 };
 
 std::unique_ptr<ELFFileHandlerStrategy::Impl> make_elf_impl(

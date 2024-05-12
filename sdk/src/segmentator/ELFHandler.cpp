@@ -54,6 +54,7 @@ using namespace VMPilot::SDK::Segmentator;
 struct ELFFileHandlerStrategy::Impl {
     ELFIO::elfio reader;
     std::unordered_map<std::string, ELFSectionViewer> section_table;
+    NativeSymbolTable native_symbol_table;
     uint64_t vmp_begin_addr = -1;
     uint64_t vmp_end_addr = -1;
     uint64_t text_base_addr = -1;
@@ -120,71 +121,11 @@ uint64_t ELFFileHandlerStrategy::doGetTextBaseAddr() noexcept {
 }
 
 NativeSymbolTable ELFFileHandlerStrategy::doGetNativeSymbolTable() noexcept {
-    // get all symbols from the .dynsym section and .symtab
-    // and return them as a NativeSymbolTable
-    NativeSymbolTable symbol_table;
-
-    // get all symbols from the .dynsym section
-    const auto& dynsym = pImpl->section_table.find(".dynsym");
-    if (dynsym == pImpl->section_table.end()) {
-        spdlog::error("Failed to get the .dynsym section");
-        return symbol_table;
+    if (pImpl->native_symbol_table.empty()) {
+        pImpl->native_symbol_table = doGetNativeSymbolTableIntl();
     }
 
-    auto section = dynsym->second.getSection();
-    if (!section) {
-        spdlog::error("Failed to get the .dynsym section");
-        return symbol_table;
-    }
-
-    // get dynsym section number
-    const auto& dynsym_section_number = section->get_index();
-    detail::enumerate_dynamic_symbols(
-        pImpl->reader, section,
-        [&symbol_table, dynsym_section_number](
-            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
-            unsigned char bind, unsigned char type,
-            ELFIO::Elf_Half section_index, unsigned char other) {
-            symbol_table.emplace_back(NativeSymbolTableEntry{
-                name, value, size, SymbolSource::DYNAMIC,
-                static_cast<SymbolType>(type),
-                static_cast<SymbolVisibility>(other),
-                static_cast<SymbolBinding>(bind),
-                static_cast<uint64_t>(dynsym_section_number),
-                static_cast<uint64_t>(section_index)});
-        });
-
-    // get all symbols from the .symtab section
-    const auto& symtab = pImpl->section_table.find(".symtab");
-    if (symtab == pImpl->section_table.end()) {
-        spdlog::error("Failed to get the .symtab section");
-        return symbol_table;
-    }
-
-    section = symtab->second.getSection();
-    if (!section) {
-        spdlog::error("Failed to get the .symtab section");
-        return symbol_table;
-    }
-
-    // get symtab section number
-    const auto& symtab_section_number = section->get_index();
-    detail::enumerate_dynamic_symbols(
-        pImpl->reader, section,
-        [&symbol_table, symtab_section_number](
-            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
-            unsigned char bind, unsigned char type,
-            ELFIO::Elf_Half section_index, unsigned char other) {
-            symbol_table.emplace_back(NativeSymbolTableEntry{
-                name, value, size, SymbolSource::STATIC,
-                static_cast<SymbolType>(type),
-                static_cast<SymbolVisibility>(other),
-                static_cast<SymbolBinding>(bind),
-                static_cast<uint64_t>(symtab_section_number),
-                static_cast<uint64_t>(section_index)});
-        });
-
-    return symbol_table;
+    return pImpl->native_symbol_table;
 }
 
 uint64_t ELFFileHandlerStrategy::getEntryIndex(
@@ -331,4 +272,73 @@ std::vector<uint8_t> ELFFileHandlerStrategy::doGetTextSectionIntl() noexcept {
     std::memcpy(text_section.data(), section->get_data(), section->get_size());
 
     return text_section;
+}
+
+NativeSymbolTable
+ELFFileHandlerStrategy::doGetNativeSymbolTableIntl() noexcept {
+    // get all symbols from the .dynsym section and .symtab
+    // and return them as a NativeSymbolTable
+    NativeSymbolTable symbol_table;
+
+    // get all symbols from the .dynsym section
+    const auto& dynsym = pImpl->section_table.find(".dynsym");
+    if (dynsym == pImpl->section_table.end()) {
+        spdlog::error("Failed to get the .dynsym section");
+        return symbol_table;
+    }
+
+    auto section = dynsym->second.getSection();
+    if (!section) {
+        spdlog::error("Failed to get the .dynsym section");
+        return symbol_table;
+    }
+
+    // get dynsym section number
+    const auto& dynsym_section_number = section->get_index();
+    detail::enumerate_dynamic_symbols(
+        pImpl->reader, section,
+        [&symbol_table, dynsym_section_number](
+            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
+            unsigned char bind, unsigned char type,
+            ELFIO::Elf_Half section_index, unsigned char other) {
+            symbol_table.emplace_back(NativeSymbolTableEntry{
+                name, value, size, SymbolSource::DYNAMIC,
+                static_cast<SymbolType>(type),
+                static_cast<SymbolVisibility>(other),
+                static_cast<SymbolBinding>(bind),
+                static_cast<uint64_t>(dynsym_section_number),
+                static_cast<uint64_t>(section_index)});
+        });
+
+    // get all symbols from the .symtab section
+    const auto& symtab = pImpl->section_table.find(".symtab");
+    if (symtab == pImpl->section_table.end()) {
+        spdlog::error("Failed to get the .symtab section");
+        return symbol_table;
+    }
+
+    section = symtab->second.getSection();
+    if (!section) {
+        spdlog::error("Failed to get the .symtab section");
+        return symbol_table;
+    }
+
+    // get symtab section number
+    const auto& symtab_section_number = section->get_index();
+    detail::enumerate_dynamic_symbols(
+        pImpl->reader, section,
+        [&symbol_table, symtab_section_number](
+            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
+            unsigned char bind, unsigned char type,
+            ELFIO::Elf_Half section_index, unsigned char other) {
+            symbol_table.emplace_back(NativeSymbolTableEntry{
+                name, value, size, SymbolSource::STATIC,
+                static_cast<SymbolType>(type),
+                static_cast<SymbolVisibility>(other),
+                static_cast<SymbolBinding>(bind),
+                static_cast<uint64_t>(symtab_section_number),
+                static_cast<uint64_t>(section_index)});
+        });
+
+    return symbol_table;
 }

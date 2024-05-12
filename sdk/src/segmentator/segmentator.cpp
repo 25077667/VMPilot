@@ -1,6 +1,8 @@
 #include <segmentator.hpp>
 
 #include <ELFHandler.hpp>
+#include <MachOHandler.hpp>
+#include <PEHandler.hpp>
 #include <X86Handler.hpp>
 #include <file_type_parser.hpp>
 
@@ -17,6 +19,14 @@ static const std::unordered_map<
         {VMPilot::Common::FileFormat::ELF,
          [](const std::string& filename) {
              return std::make_unique<ELFFileHandlerStrategy>(filename);
+         }},
+        {VMPilot::Common::FileFormat::PE,
+         [](const std::string& filename) {
+             return std::make_unique<PEFileHandlerStrategy>(filename);
+         }},
+        {VMPilot::Common::FileFormat::MachO,
+         [](const std::string& filename) {
+             return std::make_unique<MachOFileHandlerStrategy>(filename);
          }},
 };
 

@@ -65,3 +65,42 @@ std::unique_ptr<Segmentator> VMPilot::SDK::Segmentator::create_segmentator(
 
     return segmentator;
 }
+
+void VMPilot::SDK::Segmentator::Segmentator::segmentation() noexcept {
+    if (m_file_handler == nullptr || m_arch_handler == nullptr) {
+        spdlog::error("Segmentation failed: file_handler: {}, arch_handler: {}",
+                      m_file_handler == nullptr, m_arch_handler == nullptr);
+        return;
+    }
+
+    const auto& [begin_addr, end_addr] = m_file_handler->getBeginEndAddr();
+    const auto text_section = m_file_handler->getTextSection();
+    const auto text_base_addr = m_file_handler->getTextBaseAddr();
+    const auto native_symbol_table = m_file_handler->getNativeSymbolTable();
+
+    if (begin_addr == static_cast<uint64_t>(-1) ||
+        end_addr == static_cast<uint64_t>(-1) ||
+        text_base_addr == static_cast<uint64_t>(-1) || text_section.empty() ||
+        native_symbol_table.empty()) {
+        spdlog::error(
+            "Segmentation failed: begin_addr: {}, end_addr: {}, "
+            "text_base_addr: {}, text_section size: {}, native_symbol_table "
+            "size: {}",
+            begin_addr, end_addr, text_base_addr, text_section.empty(),
+            native_symbol_table.empty());
+        return;
+    }
+
+    if (!m_arch_handler->Load(text_section, text_base_addr)) {
+        spdlog::error("Segmentation failed: load failed");
+        return;
+    }
+
+    const auto native_functions = m_arch_handler->getNativeFunctions();
+    if (native_functions.empty()) {
+        spdlog::error("Segmentation failed: native_functions empty");
+        return;
+    }
+
+    spdlog::info("Segmentation succeeded");
+}

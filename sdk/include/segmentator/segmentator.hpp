@@ -20,7 +20,7 @@ class Segmentator {
         const std::string& filename) noexcept;
 
    protected:
-    virtual void segmentation() noexcept = 0;
+    virtual void segmentation() noexcept;
 
    public:
     // not allowed to default construct, please use create_segmentator

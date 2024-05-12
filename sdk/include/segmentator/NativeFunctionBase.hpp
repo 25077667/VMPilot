@@ -27,6 +27,38 @@ class NativeFunctionBase {
                        std::vector<uint8_t> code)
         : m_addr(addr), m_size(size), m_name(name), m_code(code) {}
 
+    NativeFunctionBase(const NativeFunctionBase& other)
+        : m_addr(other.m_addr),
+          m_size(other.m_size),
+          m_name(other.m_name),
+          m_code(other.m_code) {}
+
+    NativeFunctionBase(NativeFunctionBase&& other) noexcept
+        : m_addr(other.m_addr),
+          m_size(other.m_size),
+          m_name(std::move(other.m_name)),
+          m_code(std::move(other.m_code)) {}
+
+    NativeFunctionBase& operator=(const NativeFunctionBase& other) {
+        if (this != &other) {
+            m_addr = other.m_addr;
+            m_size = other.m_size;
+            m_name = other.m_name;
+            m_code = other.m_code;
+        }
+        return *this;
+    }
+
+    NativeFunctionBase& operator=(NativeFunctionBase&& other) noexcept {
+        if (this != &other) {
+            m_addr = other.m_addr;
+            m_size = other.m_size;
+            m_name = std::move(other.m_name);
+            m_code = std::move(other.m_code);
+        }
+        return *this;
+    }
+
     virtual ~NativeFunctionBase() = default;
     uint64_t getAddr() const { return m_addr; }
     uint64_t getSize() const { return m_size; }

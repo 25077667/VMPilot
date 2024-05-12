@@ -43,7 +43,8 @@ struct PEFileHandlerStrategy::Impl {
 };
 
 std::unique_ptr<PEFileHandlerStrategy::Impl>
-VMPilot::SDK::Segmentator::make_pe_impl(const std::string& file_name) {
+VMPilot::SDK::Segmentator::make_pe_impl([[maybe_unused]]  // NOLINT
+                                        const std::string& file_name) {
     auto impl = std::make_unique<PEFileHandlerStrategy::Impl>();
     // Placeholder for PE parsing, not implemented
 
@@ -87,6 +88,7 @@ std::vector<uint8_t> PEFileHandlerStrategy::doGetTextSectionIntl() noexcept {
 }
 
 std::vector<uint8_t> PEFileHandlerStrategy::getSectionData(
+    [[maybe_unused]]  // NOLINT
     const std::string& sectionName) noexcept {
     spdlog::error("PEFileHandlerStrategy::getSectionData not implemented");
     return std::vector<uint8_t>();

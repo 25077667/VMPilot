@@ -11,6 +11,8 @@ set (TARGER_NAME VMPilot_SDK_Segmentator)
 set (SRC_FILES ${SRC_FILES}
     ${CMAKE_CURRENT_SOURCE_DIR}/segmentator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ELFHandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PEHandler.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/MachOHandler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Strategy.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/X86Handler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/NativeFunctionBase.cpp

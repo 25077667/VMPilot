@@ -22,10 +22,20 @@ uint64_t FileHandlerStrategy::doGetTextBaseAddr() noexcept {
     return -1;
 }
 
-void ArchHandlerStrategy::doHandleArchitecture(const std::string& archType) {
+bool ArchHandlerStrategy::doLoad(const std::vector<uint8_t>& code,
+                                 const uint64_t base_addr) {
     // Emitting error message, not implemented
     spdlog::error(
-        "ArchHandlerStrategy::doHandleArchitecture not implemented, got arch: "
-        "{}",
-        archType);
+        "ArchHandlerStrategy::doLoad not implemented: code size: {}, "
+        "base_addr: {}",
+        code.size(), base_addr);
+
+    return false;
+}
+
+// doGetNativeFunctions
+std::vector<std::unique_ptr<NativeFunctionBase>>
+ArchHandlerStrategy::doGetNativeFunctions() {
+    spdlog::error("ArchHandlerStrategy::doGetNativeFunctions not implemented");
+    return std::vector<std::unique_ptr<NativeFunctionBase>>();
 }

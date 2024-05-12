@@ -13,7 +13,7 @@
 
 void VMPilot::SDK::Segmentator::ELF_Segmentator::segmentation() noexcept {
     try {
-        ELFHandler elfHandler(m_filename);
+        ELFFileHandlerStrategy elfHandler(m_filename);
 
         auto addr_pair = elfHandler.getBeginEndAddr();
         this->m_begin_addr = addr_pair.first;

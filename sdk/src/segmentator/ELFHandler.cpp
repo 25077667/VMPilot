@@ -13,7 +13,7 @@
 
 using namespace VMPilot::SDK::Segmentator;
 
-struct ELFHandler::Impl {
+struct ELFFileHandlerStrategy::Impl {
     ELFIO::elfio reader;
     std::unordered_map<std::string, ELFSectionViewer> section_table;
     uint64_t vmp_begin_addr = -1;
@@ -21,9 +21,9 @@ struct ELFHandler::Impl {
     uint64_t text_base_addr = -1;
 };
 
-std::unique_ptr<ELFHandler::Impl> VMPilot::SDK::Segmentator::make_elf_impl(
-    const std::string& file_name) {
-    auto impl = std::make_unique<ELFHandler::Impl>();
+std::unique_ptr<ELFFileHandlerStrategy::Impl>
+VMPilot::SDK::Segmentator::make_elf_impl(const std::string& file_name) {
+    auto impl = std::make_unique<ELFFileHandlerStrategy::Impl>();
     if (!impl->reader.load(file_name)) {
         throw std::runtime_error("File not found or it is not an ELF file");
     }
@@ -38,17 +38,18 @@ std::unique_ptr<ELFHandler::Impl> VMPilot::SDK::Segmentator::make_elf_impl(
     return impl;
 }
 
-ELFHandler::ELFHandler(const std::string& file_name)
+ELFFileHandlerStrategy::ELFFileHandlerStrategy(const std::string& file_name)
     : pImpl(make_elf_impl(file_name)) {}
 
-ELFHandler::~ELFHandler() {
+ELFFileHandlerStrategy::~ELFFileHandlerStrategy() {
     pImpl->section_table.clear();
 }
 
-std::pair<uint64_t, uint64_t> ELFHandler::getBeginEndAddr() noexcept {
+std::pair<uint64_t, uint64_t>
+ELFFileHandlerStrategy::doGetBeginEndAddr() noexcept {
     if (pImpl->vmp_begin_addr == static_cast<uint64_t>(-1) ||
         pImpl->vmp_end_addr == static_cast<uint64_t>(-1)) {
-        const auto& [begin_addr, end_addr] = doGetBeginEndAddr();
+        const auto& [begin_addr, end_addr] = doGetBeginEndAddrIntl();
         pImpl->vmp_begin_addr = begin_addr;
         pImpl->vmp_end_addr = end_addr;
     }
@@ -56,8 +57,8 @@ std::pair<uint64_t, uint64_t> ELFHandler::getBeginEndAddr() noexcept {
     return {pImpl->vmp_begin_addr, pImpl->vmp_end_addr};
 }
 
-std::vector<uint8_t> ELFHandler::getTextSection() noexcept {
-    const auto& chunk = this->doGetTextSection();
+std::vector<uint8_t> ELFFileHandlerStrategy::doGetTextSection() noexcept {
+    const auto& chunk = this->doGetTextSectionIntl();
     if (chunk.empty()) {
         spdlog::error("Error: Could not find the .text section");
         return {};
@@ -65,7 +66,7 @@ std::vector<uint8_t> ELFHandler::getTextSection() noexcept {
     return chunk;
 }
 
-uint64_t ELFHandler::getTextBaseAddr() noexcept {
+uint64_t ELFFileHandlerStrategy::doGetTextBaseAddr() noexcept {
     if (pImpl->text_base_addr == static_cast<uint64_t>(-1)) {
         const auto& text_section = pImpl->section_table.find(".text");
         if (text_section == pImpl->section_table.end()) {
@@ -80,7 +81,8 @@ uint64_t ELFHandler::getTextBaseAddr() noexcept {
     return pImpl->text_base_addr;
 }
 
-uint64_t ELFHandler::getEntryIndex(const std::string& signature) noexcept {
+uint64_t ELFFileHandlerStrategy::getEntryIndex(
+    const std::string& signature) noexcept {
     const auto& dynsym = pImpl->section_table.find(".dynsym");
     if (dynsym == pImpl->section_table.end()) {
         return -1;
@@ -118,7 +120,7 @@ uint64_t ELFHandler::getEntryIndex(const std::string& signature) noexcept {
     return -1;
 }
 
-uint64_t ELFHandler::getRelapltIdx(uint64_t dynsym_idx) noexcept {
+uint64_t ELFFileHandlerStrategy::getRelapltIdx(uint64_t dynsym_idx) noexcept {
     // 32-bit is .rel.plt, 64-bit is .rela.plt
     static const char* relaplt_name[] = {".rel.plt", ".rela.plt"};
     const int& is_64_bit = pImpl->reader.get_class() == ELFIO::ELFCLASS64;
@@ -156,7 +158,7 @@ uint64_t ELFHandler::getRelapltIdx(uint64_t dynsym_idx) noexcept {
     return -1;
 }
 
-uint64_t ELFHandler::getPltAddr(uint64_t relaplt_idx) noexcept {
+uint64_t ELFFileHandlerStrategy::getPltAddr(uint64_t relaplt_idx) noexcept {
     const auto& plt = pImpl->section_table.find(".plt");
     if (plt == pImpl->section_table.end()) {
         return -1;
@@ -174,7 +176,8 @@ uint64_t ELFHandler::getPltAddr(uint64_t relaplt_idx) noexcept {
     return plt_base_addr + alignment * (relaplt_idx + 1);
 }
 
-std::pair<uint64_t, uint64_t> ELFHandler::doGetBeginEndAddr() noexcept {
+std::pair<uint64_t, uint64_t>
+ELFFileHandlerStrategy::doGetBeginEndAddrIntl() noexcept {
     // Step 1: get the index of begin and end with getEntryIndex
     uint64_t begin_dynsym_idx =
         getEntryIndex(VMPilot::Common::BEGIN_VMPILOT_SIGNATURE);
@@ -211,7 +214,7 @@ std::pair<uint64_t, uint64_t> ELFHandler::doGetBeginEndAddr() noexcept {
     return {begin_addr, end_addr};
 }
 
-std::vector<uint8_t> ELFHandler::doGetTextSection() noexcept {
+std::vector<uint8_t> ELFFileHandlerStrategy::doGetTextSectionIntl() noexcept {
     const auto& text_section_iter = pImpl->section_table.find(".text");
     if (text_section_iter == pImpl->section_table.end()) {
         return {};

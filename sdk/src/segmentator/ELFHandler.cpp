@@ -13,39 +13,48 @@
 
 namespace {
 namespace detail {
-// a helper function to enumerate all dynamic symbols in the .dynsym section
-// para1 the reader object and the section object
-// para2 the section viewer object
-// para3 the callback function, which will be called for each symbol
 
-// The callback function type is std::function<void(std::string, ELFIO::Elf64_Addr,
+/**
+ * @brief Looks up a section in the cache table by name.
+ *
+ * This function searches for a section with the specified name in the cache table.
+ *
+ * @param table The cache table containing the sections.
+ * @param name The name of the section to look up.
+ * @return A pointer to the section if found, nullptr otherwise.
+ */
+ELFIO::section* lookup_cache_section_table(
+    std::unordered_map<std::string,
+                       VMPilot::SDK::Segmentator::ELFSectionViewer>& table,
+    const std::string& name) noexcept;
 
-void enumerate_dynamic_symbols(
-    ELFIO::elfio& reader, ELFIO::section* section,
-    std::function<void(std::string, ELFIO::Elf64_Addr, ELFIO::Elf_Xword,
-                       unsigned char, unsigned char, ELFIO::Elf_Half,
-                       unsigned char)>
-        callback) {
-    ELFIO::symbol_section_accessor accessor(reader, section);
-    auto size = accessor.get_symbols_num();
-    for (size_t i = 0; i < size; ++i) {
-        std::string name;
-        ELFIO::Elf64_Addr value;
-        ELFIO::Elf_Xword size;
-        unsigned char bind;
-        unsigned char type;
-        ELFIO::Elf_Half section_index;
-        unsigned char other;
+/**
+ * @brief Callback function type for handling ELF entries.
+ *
+ * This function type is used as a callback for handling ELF entries. It takes the following parameters:
+ * - `std::string`: The name of the ELF entry.
+ * - `ELFIO::Elf64_Addr`: The address of the ELF entry.
+ * - `ELFIO::Elf_Xword`: The size of the ELF entry.
+ * - `unsigned char`: The type of the ELF entry.
+ * - `unsigned char`: The information of the ELF entry.
+ * - `ELFIO::Elf_Half`: The section index of the ELF entry.
+ * - `unsigned char`: The binding information of the ELF entry.
+ *
+ * The callback function can be used to perform custom operations on each ELF entry.
+ */
+using ELFEntryCallback = std::function<void(
+    std::string, ELFIO::Elf64_Addr, ELFIO::Elf_Xword, unsigned char,
+    unsigned char, ELFIO::Elf_Half, unsigned char)>;
 
-        if (!accessor.get_symbol(i, name, value, size, bind, type,
-                                 section_index, other)) {
-            spdlog::error("Failed to get the symbol at index {}", i);
-            continue;
-        }
-
-        callback(name, value, size, bind, type, section_index, other);
-    }
-}
+/**
+ * Enumerates the dynamic symbols in the given ELF section.
+ *
+ * @param reader The ELFIO object representing the ELF file.
+ * @param section The ELF section containing the dynamic symbols.
+ * @param callback The callback function to be called for each dynamic symbol.
+ */
+void enumerate_dynamic_symbols(ELFIO::elfio& reader, ELFIO::section* section,
+                               ELFEntryCallback callback);
 }  // namespace detail
 }  // namespace
 
@@ -107,14 +116,10 @@ std::vector<uint8_t> ELFFileHandlerStrategy::doGetTextSection() noexcept {
 
 uint64_t ELFFileHandlerStrategy::doGetTextBaseAddr() noexcept {
     if (pImpl->text_base_addr == static_cast<uint64_t>(-1)) {
-        const auto& text_section = pImpl->section_table.find(".text");
-        if (text_section == pImpl->section_table.end()) {
-            spdlog::error("Error: Could not find the .text section");
-            return -1;
-        }
+        auto text_section =
+            detail::lookup_cache_section_table(pImpl->section_table, ".text");
 
-        pImpl->text_base_addr =
-            text_section->second.getSection()->get_address();
+        pImpl->text_base_addr = text_section->get_address();
     }
 
     return pImpl->text_base_addr;
@@ -130,41 +135,35 @@ NativeSymbolTable ELFFileHandlerStrategy::doGetNativeSymbolTable() noexcept {
 
 uint64_t ELFFileHandlerStrategy::getEntryIndex(
     const std::string& signature) noexcept {
-    const auto& dynsym = pImpl->section_table.find(".dynsym");
-    if (dynsym == pImpl->section_table.end()) {
-        return -1;
-    }
 
-    auto section = dynsym->second.getSection();
-    if (!section) {
+    auto dynsym_section =
+        detail::lookup_cache_section_table(pImpl->section_table, ".dynsym");
+    if (!dynsym_section) {
         spdlog::error("Failed to get the .dynsym section");
         return -1;
     }
 
-    ELFIO::elfio& reader = pImpl->reader;  // NOLINT
-    ELFIO::symbol_section_accessor accessor(reader, section);
-    auto size = accessor.get_symbols_num();
-    for (size_t i = 0; i < size; ++i) {
-        std::string name;
-        ELFIO::Elf64_Addr value;
-        ELFIO::Elf_Xword size;
-        unsigned char bind;
-        unsigned char type;
-        ELFIO::Elf_Half section_index;
-        unsigned char other;
-
-        if (!accessor.get_symbol(i, name, value, size, bind, type,
-                                 section_index, other)) {
-            spdlog::error("Failed to get the symbol at index {}", i);
-            continue;
-        }
-
+    uint64_t result_index = -1;
+    auto callback = [&result_index, &signature](
+                        std::string name, ELFIO::Elf64_Addr value,
+                        ELFIO::Elf_Xword size, unsigned char bind,
+                        unsigned char type, ELFIO::Elf_Half section_index,
+                        unsigned char other) mutable {
         if (name == signature) {
-            return i;
+            result_index = section_index;
         }
-    }
 
-    return -1;
+        // Suppress unused variable warnings
+        (void)value;
+        (void)size;
+        (void)bind;
+        (void)type;
+        (void)section_index;
+        (void)other;
+    };
+
+    detail::enumerate_dynamic_symbols(pImpl->reader, dynsym_section, callback);
+    return result_index;
 }
 
 uint64_t ELFFileHandlerStrategy::getRelapltIdx(uint64_t dynsym_idx) noexcept {
@@ -172,19 +171,15 @@ uint64_t ELFFileHandlerStrategy::getRelapltIdx(uint64_t dynsym_idx) noexcept {
     static const char* relaplt_name[] = {".rel.plt", ".rela.plt"};
     const int& is_64_bit = pImpl->reader.get_class() == ELFIO::ELFCLASS64;
 
-    const auto& relaplt = pImpl->section_table.find(relaplt_name[is_64_bit]);
-    if (relaplt == pImpl->section_table.end()) {
-        return -1;
-    }
-
-    auto section = relaplt->second.getSection();
-    if (!section) {
+    auto relaplt_section = detail::lookup_cache_section_table(
+        pImpl->section_table, relaplt_name[is_64_bit]);
+    if (!relaplt_section) {
         spdlog::error("Failed to get the .rela.plt section");
         return -1;
     }
 
     const auto& reader = pImpl->reader;  // NOLINT
-    ELFIO::relocation_section_accessor accessor(reader, section);
+    ELFIO::relocation_section_accessor accessor(reader, relaplt_section);
     auto size = accessor.get_entries_num();
     for (size_t i = 0; i < size; ++i) {
         ELFIO::Elf64_Addr offset;
@@ -206,19 +201,11 @@ uint64_t ELFFileHandlerStrategy::getRelapltIdx(uint64_t dynsym_idx) noexcept {
 }
 
 uint64_t ELFFileHandlerStrategy::getPltAddr(uint64_t relaplt_idx) noexcept {
-    const auto& plt = pImpl->section_table.find(".plt");
-    if (plt == pImpl->section_table.end()) {
-        return -1;
-    }
+    const auto* plt_section =
+        detail::lookup_cache_section_table(pImpl->section_table, ".plt");
 
-    const auto& section = plt->second.getSection();
-    if (!section) {
-        spdlog::error("Failed to get the .plt section");
-        return -1;
-    }
-
-    uint64_t alignment = section->get_addr_align();
-    uint64_t plt_base_addr = section->get_address();
+    uint64_t alignment = plt_section->get_addr_align();
+    uint64_t plt_base_addr = plt_section->get_address();
 
     return plt_base_addr + alignment * (relaplt_idx + 1);
 }
@@ -280,65 +267,88 @@ ELFFileHandlerStrategy::doGetNativeSymbolTableIntl() noexcept {
     // and return them as a NativeSymbolTable
     NativeSymbolTable symbol_table;
 
-    // get all symbols from the .dynsym section
-    const auto& dynsym = pImpl->section_table.find(".dynsym");
-    if (dynsym == pImpl->section_table.end()) {
+    auto dynsym_section =
+        detail::lookup_cache_section_table(pImpl->section_table, ".dynsym");
+    if (!dynsym_section) {
         spdlog::error("Failed to get the .dynsym section");
         return symbol_table;
     }
 
-    auto section = dynsym->second.getSection();
-    if (!section) {
-        spdlog::error("Failed to get the .dynsym section");
-        return symbol_table;
-    }
+    auto dynsym_section_callback =
+        [&symbol_table](std::string name, ELFIO::Elf64_Addr value,
+                        ELFIO::Elf_Xword size, unsigned char bind,
+                        unsigned char type, ELFIO::Elf_Half section_index,
+                        unsigned char other) mutable {
+            symbol_table.emplace_back(
+                NativeSymbolTableEntry{name, value, size, SymbolSource::DYNAMIC,
+                                       static_cast<SymbolType>(type),
+                                       static_cast<SymbolVisibility>(other),
+                                       static_cast<SymbolBinding>(bind),
+                                       static_cast<uint64_t>(section_index),
+                                       static_cast<uint64_t>(section_index)});
+        };
+    detail::enumerate_dynamic_symbols(pImpl->reader, dynsym_section,
+                                      dynsym_section_callback);
 
-    // get dynsym section number
-    const auto& dynsym_section_number = section->get_index();
-    detail::enumerate_dynamic_symbols(
-        pImpl->reader, section,
-        [&symbol_table, dynsym_section_number](
-            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
-            unsigned char bind, unsigned char type,
-            ELFIO::Elf_Half section_index, unsigned char other) {
-            symbol_table.emplace_back(NativeSymbolTableEntry{
-                name, value, size, SymbolSource::DYNAMIC,
-                static_cast<SymbolType>(type),
-                static_cast<SymbolVisibility>(other),
-                static_cast<SymbolBinding>(bind),
-                static_cast<uint64_t>(dynsym_section_number),
-                static_cast<uint64_t>(section_index)});
-        });
-
-    // get all symbols from the .symtab section
-    const auto& symtab = pImpl->section_table.find(".symtab");
-    if (symtab == pImpl->section_table.end()) {
+    auto symtab_section =
+        detail::lookup_cache_section_table(pImpl->section_table, ".symtab");
+    if (!symtab_section) {
         spdlog::error("Failed to get the .symtab section");
         return symbol_table;
     }
 
-    section = symtab->second.getSection();
-    if (!section) {
-        spdlog::error("Failed to get the .symtab section");
-        return symbol_table;
-    }
-
-    // get symtab section number
-    const auto& symtab_section_number = section->get_index();
-    detail::enumerate_dynamic_symbols(
-        pImpl->reader, section,
-        [&symbol_table, symtab_section_number](
-            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
-            unsigned char bind, unsigned char type,
-            ELFIO::Elf_Half section_index, unsigned char other) {
-            symbol_table.emplace_back(NativeSymbolTableEntry{
-                name, value, size, SymbolSource::STATIC,
-                static_cast<SymbolType>(type),
-                static_cast<SymbolVisibility>(other),
-                static_cast<SymbolBinding>(bind),
-                static_cast<uint64_t>(symtab_section_number),
-                static_cast<uint64_t>(section_index)});
-        });
-
+    auto symtab_section_callback =
+        [&symbol_table](std::string name, ELFIO::Elf64_Addr value,
+                        ELFIO::Elf_Xword size, unsigned char bind,
+                        unsigned char type, ELFIO::Elf_Half section_index,
+                        unsigned char other) mutable {
+            symbol_table.emplace_back(
+                NativeSymbolTableEntry{name, value, size, SymbolSource::STATIC,
+                                       static_cast<SymbolType>(type),
+                                       static_cast<SymbolVisibility>(other),
+                                       static_cast<SymbolBinding>(bind),
+                                       static_cast<uint64_t>(section_index),
+                                       static_cast<uint64_t>(section_index)});
+        };
+    detail::enumerate_dynamic_symbols(pImpl->reader, symtab_section,
+                                      symtab_section_callback);
     return symbol_table;
+}
+
+ELFIO::section* detail::lookup_cache_section_table(
+    std::unordered_map<std::string,
+                       VMPilot::SDK::Segmentator::ELFSectionViewer>& table,
+    const std::string& name) noexcept {
+    auto section = table.find(name);
+    if (section == table.end()) {
+        spdlog::error("Failed to get the {} section", name);
+        return nullptr;
+    }
+
+    return section->second.getSection();
+}
+
+void detail::enumerate_dynamic_symbols(ELFIO::elfio& reader,
+                                       ELFIO::section* section,
+                                       detail::ELFEntryCallback callback) {
+
+    ELFIO::symbol_section_accessor accessor(reader, section);
+    auto size = accessor.get_symbols_num();
+    for (size_t i = 0; i < size; ++i) {
+        std::string name;
+        ELFIO::Elf64_Addr value;
+        ELFIO::Elf_Xword size;
+        unsigned char bind;
+        unsigned char type;
+        ELFIO::Elf_Half section_index;
+        unsigned char other;
+
+        if (!accessor.get_symbol(i, name, value, size, bind, type,
+                                 section_index, other)) {
+            spdlog::error("Failed to get the symbol at index {}", i);
+            continue;
+        }
+
+        callback(name, value, size, bind, type, section_index, other);
+    }
 }

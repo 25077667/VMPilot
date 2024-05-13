@@ -1,4 +1,7 @@
 #include <file_type_parser.hpp>
+#include <header/native/elf.hpp>
+#include <header/native/macho.hpp>
+#include <header/native/pe.hpp>
 
 #include <array>
 #include <cstdint>
@@ -12,84 +15,17 @@ using namespace VMPilot::Common;
 
 namespace {
 namespace header {
-struct Elf32_Ehdr {
-    uint8_t e_ident[16];
-    uint16_t e_type;
-    uint16_t e_machine;
-    uint32_t e_version;
-    uint32_t e_entry;
-    uint32_t e_phoff;
-    uint32_t e_shoff;
-    uint32_t e_flags;
-    uint16_t e_ehsize;
-    uint16_t e_phentsize;
-    uint16_t e_phnum;
-    uint16_t e_shentsize;
-    uint16_t e_shnum;
-    uint16_t e_shstrndx;
-};
+using Elf32_Ehdr = Header::Elf32_Ehdr;
+using ELF64_Ehdr = Header::ELF64_Ehdr;
 
-struct ELF64_Ehdr {
-    uint8_t e_ident[16];
-    uint16_t e_type;
-    uint16_t e_machine;
-    uint32_t e_version;
-    uint64_t e_entry;
-    uint64_t e_phoff;
-    uint64_t e_shoff;
-    uint32_t e_flags;
-    uint16_t e_ehsize;
-    uint16_t e_phentsize;
-    uint16_t e_phnum;
-    uint16_t e_shentsize;
-    uint16_t e_shnum;
-    uint16_t e_shstrndx;
-};
+using PE32_Ehdr = Header::PE32_Ehdr;
+using PE64_Ehdr = Header::PE64_Ehdr;
 
-struct PE32_Ehdr {
-    uint16_t Machine;
-    uint16_t NumberOfSections;
-    uint32_t TimeDateStamp;
-    uint32_t PointerToSymbolTable;
-    uint32_t NumberOfSymbols;
-    uint16_t SizeOfOptionalHeader;
-    uint16_t Characteristics;
-};
+using MachO_Ehdr = Header::MachO_Ehdr;
 
-struct PE64_Ehdr {
-    uint16_t Machine;
-    uint16_t NumberOfSections;
-    uint32_t TimeDateStamp;
-    uint32_t PointerToSymbolTable;
-    uint32_t NumberOfSymbols;
-    uint16_t SizeOfOptionalHeader;
-    uint16_t Characteristics;
-};
-
-struct MachO_Ehdr {
-    uint32_t magic;
-    uint32_t cputype;
-    uint32_t cpusubtype;
-    uint32_t filetype;
-    uint32_t ncmds;
-    uint32_t sizeofcmds;
-    uint32_t flags;
-    uint32_t reserved;
-};
-
-union ElfHeader {
-    Elf32_Ehdr elf32;
-    ELF64_Ehdr elf64;
-};
-
-union PEHeader {
-    PE32_Ehdr pe32;
-    PE64_Ehdr pe64;
-};
-
-union MachOHeader {
-    MachO_Ehdr macho;
-};
+using ElfHeader = Header::ElfHeader;
+using PEHeader = Header::PEHeader;
+using MachOHeader = Header::MachOHeader;
 
 }  // namespace header
 

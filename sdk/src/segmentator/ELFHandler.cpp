@@ -47,14 +47,15 @@ using ELFEntryCallback = std::function<void(
     unsigned char, ELFIO::Elf_Half, unsigned char)>;
 
 /**
- * Enumerates the dynamic symbols in the given ELF section.
+ * Enumerates the symbols in the given ELF section.
  *
  * @param reader The ELFIO object representing the ELF file.
- * @param section The ELF section containing the dynamic symbols.
- * @param callback The callback function to be called for each dynamic symbol.
+ * @param section The ELF section containing the symbols.
+ * @param callback The callback function to be called for each symbol.
+ * @note The section must be a symbol section. (tipically .dynsym or .symtab)
  */
-void enumerate_dynamic_symbols(ELFIO::elfio& reader, ELFIO::section* section,
-                               ELFEntryCallback callback);
+void enumerate_symbol_table(ELFIO::elfio& reader, ELFIO::section* section,
+                            ELFEntryCallback callback);
 }  // namespace detail
 }  // namespace
 
@@ -162,7 +163,7 @@ uint64_t ELFFileHandlerStrategy::getEntryIndex(
         (void)other;
     };
 
-    detail::enumerate_dynamic_symbols(pImpl->reader, dynsym_section, callback);
+    detail::enumerate_symbol_table(pImpl->reader, dynsym_section, callback);
     return result_index;
 }
 
@@ -287,8 +288,8 @@ ELFFileHandlerStrategy::doGetNativeSymbolTableIntl() noexcept {
                                        static_cast<uint64_t>(section_index),
                                        static_cast<uint64_t>(section_index)});
         };
-    detail::enumerate_dynamic_symbols(pImpl->reader, dynsym_section,
-                                      dynsym_section_callback);
+    detail::enumerate_symbol_table(pImpl->reader, dynsym_section,
+                                   dynsym_section_callback);
 
     auto symtab_section =
         detail::lookup_cache_section_table(pImpl->section_table, ".symtab");
@@ -310,8 +311,8 @@ ELFFileHandlerStrategy::doGetNativeSymbolTableIntl() noexcept {
                                        static_cast<uint64_t>(section_index),
                                        static_cast<uint64_t>(section_index)});
         };
-    detail::enumerate_dynamic_symbols(pImpl->reader, symtab_section,
-                                      symtab_section_callback);
+    detail::enumerate_symbol_table(pImpl->reader, symtab_section,
+                                   symtab_section_callback);
     return symbol_table;
 }
 
@@ -328,9 +329,9 @@ ELFIO::section* detail::lookup_cache_section_table(
     return section->second.getSection();
 }
 
-void detail::enumerate_dynamic_symbols(ELFIO::elfio& reader,
-                                       ELFIO::section* section,
-                                       detail::ELFEntryCallback callback) {
+void detail::enumerate_symbol_table(ELFIO::elfio& reader,
+                                    ELFIO::section* section,
+                                    detail::ELFEntryCallback callback) {
 
     ELFIO::symbol_section_accessor accessor(reader, section);
     auto size = accessor.get_symbols_num();

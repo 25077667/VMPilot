@@ -40,7 +40,7 @@ std::vector<std::unique_ptr<NativeFunctionBase>>
 X86Handler::doGetNativeFunctions(
     [[maybe_unused]] const NativeSymbolTable& native_symbol_table) noexcept {
     auto& native_functions = this->pImpl->native_functions;
-    if (native_functions.empty()) {
+    if (!native_functions.empty()) {
         // TODO: Implement this function
     }
 

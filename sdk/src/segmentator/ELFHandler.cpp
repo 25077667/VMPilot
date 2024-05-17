@@ -271,21 +271,21 @@ ELFFileHandlerStrategy::doGetNativeSymbolTableIntl() noexcept {
     auto dynsym_section =
         detail::lookup_cache_section_table(pImpl->section_table, ".dynsym");
     if (!dynsym_section) {
-        spdlog::error("Failed to get the .dynsym section");
+        std::clog << "Failed to get the .dynsym section" << std::endl;
         return symbol_table;
     }
 
     auto dynsym_section_callback =
-        [&symbol_table](std::string name, ELFIO::Elf64_Addr value,
-                        ELFIO::Elf_Xword size, unsigned char bind,
-                        unsigned char type, ELFIO::Elf_Half section_index,
-                        unsigned char other) mutable {
+        [&symbol_table, section_number = dynsym_section->get_index()](
+            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
+            unsigned char bind, unsigned char type,
+            ELFIO::Elf_Half section_index, unsigned char other) mutable {
             symbol_table.emplace_back(
                 NativeSymbolTableEntry{name, value, size, SymbolSource::DYNAMIC,
                                        static_cast<SymbolType>(type),
                                        static_cast<SymbolVisibility>(other),
                                        static_cast<SymbolBinding>(bind),
-                                       static_cast<uint64_t>(section_index),
+                                       static_cast<uint64_t>(section_number),
                                        static_cast<uint64_t>(section_index)});
         };
     detail::enumerate_symbol_table(pImpl->reader, dynsym_section,
@@ -294,21 +294,21 @@ ELFFileHandlerStrategy::doGetNativeSymbolTableIntl() noexcept {
     auto symtab_section =
         detail::lookup_cache_section_table(pImpl->section_table, ".symtab");
     if (!symtab_section) {
-        spdlog::error("Failed to get the .symtab section");
+        std::clog << "Failed to get the .symtab section" << std::endl;
         return symbol_table;
     }
 
     auto symtab_section_callback =
-        [&symbol_table](std::string name, ELFIO::Elf64_Addr value,
-                        ELFIO::Elf_Xword size, unsigned char bind,
-                        unsigned char type, ELFIO::Elf_Half section_index,
-                        unsigned char other) mutable {
+        [&symbol_table, section_number = symtab_section->get_index()](
+            std::string name, ELFIO::Elf64_Addr value, ELFIO::Elf_Xword size,
+            unsigned char bind, unsigned char type,
+            ELFIO::Elf_Half section_index, unsigned char other) mutable {
             symbol_table.emplace_back(
                 NativeSymbolTableEntry{name, value, size, SymbolSource::STATIC,
                                        static_cast<SymbolType>(type),
                                        static_cast<SymbolVisibility>(other),
                                        static_cast<SymbolBinding>(bind),
-                                       static_cast<uint64_t>(section_index),
+                                       static_cast<uint64_t>(section_number),
                                        static_cast<uint64_t>(section_index)});
         };
     detail::enumerate_symbol_table(pImpl->reader, symtab_section,

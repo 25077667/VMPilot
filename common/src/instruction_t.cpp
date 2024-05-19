@@ -1,5 +1,6 @@
 #include <cstring>
 #include <functional>
+#include <random>
 
 #include <VMPilot_crypto.hpp>
 #include <instruction_t.hpp>
@@ -17,6 +18,8 @@ namespace detail {
  * Salt: nounce field
  */
 Hash_val_t Hash(const Instruction_t& inst) noexcept;
+using NonceType = decltype(Instruction_t::nounce);
+NonceType GenerateNonce() noexcept;
 }  // namespace detail
 
 bool VMPilot::Common::Instruction::check(const Instruction_t& inst) noexcept {
@@ -37,10 +40,50 @@ void VMPilot::Common::Instruction::decrypt(Instruction_t& inst,
         padded_key.resize(32);
 
     // Decrypt the instruction
-    const auto decrypted_data =
-        VMPilot::Crypto::Decrypt_AES_256_CBC_PKCS7(
-            std::vector<uint8_t>(data.begin(), data.end()), padded_key);
+    const auto decrypted_data = VMPilot::Crypto::Decrypt_AES_256_CBC_PKCS7(
+        std::vector<uint8_t>(data.begin(), data.end()), padded_key);
     ::memcpy(&inst, decrypted_data.data(), sizeof(Instruction_t));
+
+    // Update the checksum
+    update_checksum(inst);
+}
+
+void VMPilot::Common::Instruction::encrypt(Instruction_t& inst,
+                                           const std::string& key) noexcept {
+    inst.nounce = detail::GenerateNonce();
+
+    std::string padded_key = key;
+    if (key.size() < 32)
+        padded_key.resize(32, 0);
+    else if (key.size() > 32)
+        padded_key.resize(32);
+
+    // Encrypt the instruction
+    const auto data = flatten(inst);
+    const auto encrypted_data = VMPilot::Crypto::Encrypt_AES_256_CBC_PKCS7(
+        std::vector<uint8_t>(data.begin(), data.end()), padded_key);
+    ::memcpy(&inst, encrypted_data.data(), sizeof(Instruction_t));
+
+    // Update the checksum
+    update_checksum(inst);
+}
+
+void VMPilot::Common::Instruction::encrypt(Instruction_t& inst,
+                                           const std::string& key,
+                                           uint32_t nounce) noexcept {
+    inst.nounce = nounce;
+
+    std::string padded_key = key;
+    if (key.size() < 32)
+        padded_key.resize(32, 0);
+    else if (key.size() > 32)
+        padded_key.resize(32);
+
+    // Encrypt the instruction
+    const auto data = flatten(inst);
+    const auto encrypted_data = VMPilot::Crypto::Encrypt_AES_256_CBC_PKCS7(
+        std::vector<uint8_t>(data.begin(), data.end()), padded_key);
+    ::memcpy(&inst, encrypted_data.data(), sizeof(Instruction_t));
 
     // Update the checksum
     update_checksum(inst);
@@ -70,11 +113,18 @@ Hash_val_t detail::Hash(const Instruction_t& inst) noexcept {
     std::string salt = std::to_string(inst.nounce);
 
     // Hash the data
-    const auto& hash_str = VMPilot::Crypto::SHA256(
-        std::vector<uint8_t>(data.begin(), data.end()),
-        std::vector<uint8_t>(salt.begin(), salt.end()));
+    const auto& hash_str =
+        VMPilot::Crypto::SHA256(std::vector<uint8_t>(data.begin(), data.end()),
+                                std::vector<uint8_t>(salt.begin(), salt.end()));
 
     // hash that string
     return std::hash<std::string>{}(
         std::string(hash_str.begin(), hash_str.end()));
+}
+
+detail::NonceType detail::GenerateNonce() noexcept {
+    static std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<detail::NonceType> dis;
+    return dis(gen);
 }
